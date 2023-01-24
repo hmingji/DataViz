@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Entities;
 using api.Repositories.Interfaces;
+using api.RequestHelpers;
 using Dapper;
 using Npgsql;
 
@@ -38,6 +39,132 @@ namespace api.Repositories
                 return false;
             
             return true;
+        }
+
+        public async Task<List<TimeSeriesData>> GetDailyRecords(string state, string attribute)
+        {
+            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+
+            string query = getDailyDataQueryBasedOnAttribute(attribute);
+
+            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
+            
+            return data;
+        } 
+
+        public async Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute)
+        {
+            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+
+            string query = getMonthlyDataQueryBasedOnAttribute(attribute);
+
+            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
+            
+            return data;
+        }
+
+        public async Task<List<TimeSeriesData>> GetYearlyRecords(string state, string attribute)
+        {
+            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+
+            string query = getYearlyDataQueryBasedOnAttribute(attribute);
+
+            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
+
+            return data;
+        }
+
+        private string getDailyDataQueryBasedOnAttribute(string attribute)
+        {   
+            switch (attribute.ToLower())
+            {
+                case "agegroup17_24":
+                    return "SELECT Date as Date, AgeGroup17_24 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup25_29":
+                    return "SELECT Date as Date, AgeGroup25_29 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup30_34":
+                    return "SELECT Date as Date, AgeGroup30_34 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup35_39":
+                    return "SELECT Date as Date, AgeGroup35_39 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup40_44":
+                    return "SELECT Date as Date, AgeGroup40_44 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup45_49":
+                    return "SELECT Date as Date, AgeGroup45_49 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup50_54":
+                    return "SELECT Date as Date, AgeGroup50_54 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup55_59":
+                    return "SELECT Date as Date, AgeGroup55_59 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroup60_64":
+                    return "SELECT Date as Date, AgeGroup60_64 as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "agegroupother":
+                    return "SELECT Date as Date, AgeGroupOther as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                case "total":
+                    return "SELECT Date as Date, Total as Value FROM NewDonorRecord WHERE State = @state ORDER BY Date ASC";
+                default:
+                    throw new ArgumentException("Invalid attribute");
+            }
+        }
+
+        private string getMonthlyDataQueryBasedOnAttribute(string attribute)
+        {   
+            switch (attribute.ToLower())
+            {
+                case "agegroup17_24":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup17_24) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup25_29":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup25_29) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup30_34":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup30_34) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup35_39":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup35_39) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup40_44":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup40_44) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup45_49":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup45_49) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup50_54":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup50_54) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup55_59":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup55_59) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup60_64":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup60_64) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroupother":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroupOther) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                case "total":
+                    return "SELECT MIN(Date) as Date, SUM(Total) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('month', Date), DATE_PART('year', Date) ORDER BY Date ASC";
+                default:
+                    throw new ArgumentException("Invalid attribute");
+            }
+        }
+
+        private string getYearlyDataQueryBasedOnAttribute(string attribute)
+        {   
+            switch (attribute.ToLower())
+            {
+                case "agegroup17_24":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup17_24) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup25_29":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup25_29) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup30_34":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup30_34) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup35_39":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup35_39) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup40_44":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup40_44) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup45_49":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup45_49) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup50_54":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup50_54) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup55_59":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup55_59) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroup60_64":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroup60_64) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "agegroupother":
+                    return "SELECT MIN(Date) as Date, SUM(AgeGroupOther) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                case "total":
+                    return "SELECT MIN(Date) as Date, SUM(Total) as Value FROM NewDonorRecord WHERE State = @state GROUP BY DATE_PART('year', Date) ORDER BY Date ASC";
+                default:
+                    throw new ArgumentException("Invalid attribute");
+            }
         }
     }
 }
