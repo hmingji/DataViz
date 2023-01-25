@@ -1,7 +1,8 @@
 import Head from 'next/head';
-import { Inter } from '@next/font/google';
+//import { Inter } from '@next/font/google';
+import DropdownMenu from '@/components/common/DropdownMenu';
 
-const inter = Inter({ subsets: ['latin'] });
+//const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   return (
@@ -22,7 +23,12 @@ export default function Home() {
         />
       </Head>
       <main>
-        <h1 className="text-white">Hello World!</h1>
+        <h1 className="text-black">Hello World! testing</h1>
+        <DropdownMenu
+          buttonLabel="Attribute"
+          menuItems={['Daily', 'Blood A']}
+          handleItemOnClick={() => console.log('item clicked.')}
+        />
       </main>
     </>
   );
