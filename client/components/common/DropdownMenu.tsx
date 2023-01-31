@@ -1,16 +1,20 @@
 import { Menu } from '@headlessui/react';
+import { ReactNode } from 'react';
 
 interface Props {
   buttonLabel: string;
   menuItems: string[];
-  handleItemOnClick: () => void;
-  //button icon
+  handleOnClick: (item: string) => void;
+  buttonIcon?: ReactNode;
+  selectedItem: string | undefined;
 }
-
+//TODO: allow width variantion
 export default function DropdownMenu({
   buttonLabel,
   menuItems,
-  handleItemOnClick,
+  handleOnClick,
+  buttonIcon,
+  selectedItem,
 }: Props) {
   return (
     <Menu
@@ -19,13 +23,14 @@ export default function DropdownMenu({
     >
       <Menu.Button>
         {({ open }) => (
-          <button
-            className={`justify-center border border-gray-200 rounded-md px-2 py-1 text-md font-semibold hover:border-gray-500 ${
+          <span
+            className={`flex items-center justify-between min-w-[8rem] border border-gray-200 rounded-md px-2 py-1 text-md font-semibold hover:border-gray-500 ${
               open && 'border-gray-500'
             }`}
           >
-            {buttonLabel}
-          </button>
+            {selectedItem ? selectedItem : buttonLabel}
+            {buttonIcon}
+          </span>
         )}
       </Menu.Button>
 
@@ -38,7 +43,7 @@ export default function DropdownMenu({
                   className={`${
                     active && 'bg-gray-200'
                   } px-2 py-1 font-semibold w-full text-left rounded-md`}
-                  onClick={handleItemOnClick}
+                  onClick={() => handleOnClick(item)}
                 >
                   {item}
                 </button>

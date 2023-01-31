@@ -1,10 +1,19 @@
+import { ChevronDown } from '@/components/common/Icons/ChevronDown';
+import SelectionGroup from '@/components/common/SelectionGroup';
 import Head from 'next/head';
+import { useState } from 'react';
 //import { Inter } from '@next/font/google';
-import DropdownMenu from '@/components/common/DropdownMenu';
+import DropdownMenu from '../components/common/DropdownMenu';
 
 //const inter = Inter({ subsets: ['latin'] });
-
 export default function Home() {
+  const [selected, setSelected] = useState<string | undefined>(undefined);
+  const [interval, setInterval] = useState<number | undefined>(1);
+
+  function handleDropdownOnClick(item: string) {
+    setSelected(item);
+  }
+
   return (
     <>
       <Head>
@@ -23,12 +32,27 @@ export default function Home() {
         />
       </Head>
       <main>
-        <h1 className="text-black">Hello World! testing</h1>
-        <DropdownMenu
-          buttonLabel="Attribute"
-          menuItems={['Daily', 'Blood A']}
-          handleItemOnClick={() => console.log('item clicked.')}
-        />
+        <h1 className="text-black">Hello World!</h1>
+
+        <div className="w-full flex gap-2 px-2">
+          <DropdownMenu
+            buttonLabel="Attribute"
+            menuItems={['Daily', 'Blood A']}
+            handleOnClick={handleDropdownOnClick}
+            buttonIcon={<ChevronDown size="sm" />}
+            selectedItem={selected}
+          />
+
+          <SelectionGroup
+            options={[
+              { id: 1, label: 'Daily' },
+              { id: 2, label: 'Monthly' },
+              { id: 3, label: 'Yearly' },
+            ]}
+            handleOnChange={setInterval}
+            value={interval}
+          />
+        </div>
       </main>
     </>
   );
