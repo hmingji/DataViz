@@ -1,4 +1,5 @@
 import { ChevronDown } from '@/components/common/Icons/ChevronDown';
+import MultiSelectListBox from '@/components/common/MultiSelectListBox';
 import SelectionGroup from '@/components/common/SelectionGroup';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -9,6 +10,7 @@ import DropdownMenu from '../components/common/DropdownMenu';
 export default function Home() {
   const [selected, setSelected] = useState<string | undefined>(undefined);
   const [interval, setInterval] = useState<number | undefined>(1);
+  const [states, setStates] = useState<number[]>([1]);
 
   function handleDropdownOnClick(item: string) {
     setSelected(item);
@@ -34,7 +36,7 @@ export default function Home() {
       <main>
         <h1 className="text-black">Hello World!</h1>
 
-        <div className="w-full flex gap-2 px-2">
+        <div className="w-full flex gap-8 px-2">
           <DropdownMenu
             buttonLabel="Attribute"
             menuItems={['Daily', 'Blood A']}
@@ -51,6 +53,19 @@ export default function Home() {
             ]}
             handleOnChange={setInterval}
             value={interval}
+          />
+
+          <MultiSelectListBox
+            buttonLabel="States"
+            options={[
+              { id: 1, label: 'Kuala Lumpur' },
+              { id: 2, label: 'Melaka' },
+              { id: 3, label: 'Johor' },
+              { id: 4, label: 'Sarawak' },
+            ]}
+            handleOnChange={setStates}
+            value={states}
+            optionWithIcon={false}
           />
         </div>
       </main>

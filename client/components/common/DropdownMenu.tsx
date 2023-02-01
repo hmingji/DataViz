@@ -8,7 +8,7 @@ interface Props {
   buttonIcon?: ReactNode;
   selectedItem: string | undefined;
 }
-//TODO: allow width variantion
+//TODO: allow width variantion and font color diff for srlected items
 export default function DropdownMenu({
   buttonLabel,
   menuItems,
@@ -42,7 +42,7 @@ export default function DropdownMenu({
                 <button
                   className={`${
                     active && 'bg-gray-200'
-                  } px-2 py-1 font-semibold w-full text-left rounded-md`}
+                  } px-2 py-1 w-full text-left rounded-md`}
                   onClick={() => handleOnClick(item)}
                 >
                   {item}
