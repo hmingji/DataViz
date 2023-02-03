@@ -2,21 +2,24 @@ import { ChevronDown } from '@/components/common/Icons/ChevronDown';
 import LineChart from '@/components/common/LineChart';
 import MultiSelectListBox from '@/components/common/MultiSelectListBox';
 import SelectionGroup from '@/components/common/SelectionGroup';
+import { Attribute, attributes } from '@/constants/attributes';
+import { Interval, intervals } from '@/constants/intervals';
+import { State, states } from '@/constants/states';
 import { useRecordQuery } from '@/hooks/useRecordQuery';
 import { ChartOptions } from 'chart.js';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 //import { Inter } from '@next/font/google';
 import DropdownMenu from '../components/common/DropdownMenu';
 //const inter = Inter({ subsets: ['latin'] });
 export default function Home() {
-  const [selected, setSelected] = useState<string | undefined>(undefined);
-  const [interval, setInterval] = useState<number | undefined>(1);
-  const [states, setStates] = useState<number[]>([1]);
-  const { data, isSuccess } = useRecordQuery(
-    'Record/donation/yearly/daily',
-    'Melaka'
+  const [attribute, setAttribute] = useState<Attribute>(attributes[0]);
+  const [interval, setInterval] = useState<Interval>(intervals[0]);
+  const [state, setState] = useState<State[]>([states[0]]);
+  const url = useRef(
+    `Record/${attribute.category}/${interval.pathName}/${attribute.pathName}`
   );
+  const results = useRecordQuery(url.current, state);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -33,12 +36,12 @@ export default function Home() {
     },
   };
 
-  function handleDropdownOnClick(item: string) {
-    setSelected(item);
+  function handleDropdownOnClick(item: Attribute) {
+    setAttribute(item);
   }
 
-  if (isSuccess) {
-    const finalData = data.data.map((item) => {
+  if (results[0].isSuccess) {
+    const finalData = results[0].data.data.map((item) => {
       const date = new Date(item.date);
       const dateInMsWithoutTZ =
         date.getTime() + date.getTimezoneOffset() * 60 * 1000;
@@ -80,7 +83,7 @@ export default function Home() {
         <main>
           <h1 className="text-black">Hello World!</h1>
 
-          <div className="w-full flex gap-8 px-2">
+          {/* <div className="w-full flex gap-8 px-2">
             <DropdownMenu
               buttonLabel="Attribute"
               menuItems={['Daily', 'Blood A']}
@@ -117,7 +120,7 @@ export default function Home() {
               chartData={chartdata}
               options={options}
             />
-          </div>
+          </div> */}
         </main>
       </>
     );
