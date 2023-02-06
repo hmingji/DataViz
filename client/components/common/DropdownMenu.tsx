@@ -34,7 +34,7 @@ export default function DropdownMenu({
         )}
       </Menu.Button>
 
-      <Menu.Items className="min-w-[8rem] absolute left-0 origin-top-left rounded-md shadow-lg">
+      <Menu.Items className="min-w-[8rem] absolute left-0 origin-top-left rounded-md shadow-lg bg-white">
         <div className="px-1 py-1">
           {menuItems.map((item) => (
             <Menu.Item key={item}>

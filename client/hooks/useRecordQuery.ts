@@ -14,6 +14,7 @@ export const useRecordQuery = (url: string, states: State[]) => {
       return {
         queryKey: [url, state.paramValue],
         queryFn: () => requests.get<RecordResponse>(url, params),
+        staleTime: twentyFourHoursInMs,
       };
     })
   );

@@ -39,7 +39,7 @@ namespace api.Controllers
             var data = await _donationRecordRepository.GetDailyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "daily", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "daily");
             
             return result;
         }
@@ -51,7 +51,7 @@ namespace api.Controllers
             var data = await _donationRecordRepository.GetMonthlyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "monthly", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "monthly");
             
             return result;
         }
@@ -63,7 +63,7 @@ namespace api.Controllers
             var data = await _donationRecordRepository.GetYearlyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "yearly", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "yearly");
             
             return result;
         }
@@ -93,7 +93,7 @@ namespace api.Controllers
             var data = await _newDonorRecordRepository.GetDailyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "daily", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "daily");
             
             return result;
         }
@@ -105,7 +105,7 @@ namespace api.Controllers
             var data = await _newDonorRecordRepository.GetMonthlyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "monthly", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "monthly");
             
             return result;
         }
@@ -117,7 +117,7 @@ namespace api.Controllers
             var data = await _newDonorRecordRepository.GetYearlyRecords(recordParams.State, attribute);
             if (data == null) return NotFound();
             //TODO: create a interval constants to replace the monthly string
-            var result = new DataResponse<TimeSeriesData>(data, attribute, "yearly", recordParams.State);
+            var result = new DataResponse<TimeSeriesData>(data, attribute, recordParams.State, "yearly");
             
             return result;
         }

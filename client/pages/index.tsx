@@ -1,5 +1,5 @@
 import { ChevronDown } from '@/components/common/Icons/ChevronDown';
-import LineChart from '@/components/common/LineChart';
+//import LineChart from '@/components/common/LineChart';
 import MultiSelectListBox from '@/components/common/MultiSelectListBox';
 import SelectionGroup from '@/components/common/SelectionGroup';
 import { Attribute, attributes } from '@/constants/attributes';
@@ -7,20 +7,26 @@ import { Interval, intervals } from '@/constants/intervals';
 import { State, states } from '@/constants/states';
 import { useRecordQuery } from '@/hooks/useRecordQuery';
 import { ChartOptions } from 'chart.js';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+const LineChart = dynamic(() => import('@/components/common/LineChart'), {
+  ssr: false,
+});
 //import { Inter } from '@next/font/google';
 import DropdownMenu from '../components/common/DropdownMenu';
 //const inter = Inter({ subsets: ['latin'] });
 export default function Home() {
   const [attribute, setAttribute] = useState<Attribute>(attributes[0]);
-  const [interval, setInterval] = useState<Interval>(intervals[0]);
+  const [interval, setInterval] = useState<Interval>(intervals[2]);
   const [state, setState] = useState<State[]>([states[0]]);
-  const url = useRef(
+  const [url, setUrl] = useState(
     `Record/${attribute.category}/${interval.pathName}/${attribute.pathName}`
   );
-  const results = useRecordQuery(url.current, state);
 
+  const results = useRecordQuery(url, state);
+  //console.log('url', url);
+  //unit of time to be dynamic
   const options: ChartOptions<'line'> = {
     responsive: true,
     scales: {
@@ -34,33 +40,84 @@ export default function Home() {
         beginAtZero: true,
       },
     },
+    plugins: {
+      zoom: {
+        zoom: {
+          // drag: {
+          //   enabled: true,
+          // },
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+        pan: {
+          enabled: true,
+          mode: 'x',
+          modifierKey: 'ctrl',
+        },
+      },
+    },
   };
+  useEffect(() => {
+    setUrl(
+      `Record/${attribute.category}/${interval.pathName}/${attribute.pathName}`
+    );
+  }, [attribute, interval]);
 
-  function handleDropdownOnClick(item: Attribute) {
-    setAttribute(item);
+  function handleDropdownOnClick(item: string) {
+    const latestAttribute = attributes.find(
+      (attribute) => attribute.displayName == item
+    );
+    if (latestAttribute) setAttribute(latestAttribute);
   }
 
-  if (results[0].isSuccess) {
-    const finalData = results[0].data.data.map((item) => {
-      const date = new Date(item.date);
-      const dateInMsWithoutTZ =
-        date.getTime() + date.getTimezoneOffset() * 60 * 1000;
+  function handleIntervalOnChange(item: number) {
+    const latestInterval = intervals.find((interval) => interval.id == item);
+    if (latestInterval) setInterval(latestInterval);
+  }
+
+  function handleStatesOnChange(items: number[]) {
+    const latestStates = states.filter((state) => items.includes(state.id));
+    if (latestStates) setState(latestStates);
+  }
+  //TODO: try api off and see if query state is success
+  if (results.every((result) => result.isSuccess == true)) {
+    const dataSets = results.map((result) => {
+      //aff if to check result.data is exist
+      const chartData = result.data?.data.map((datum) => {
+        const date = new Date(datum.date);
+        const dateInMsWithoutOffset =
+          date.getTime() + date.getTimezoneOffset() * 60 * 1000;
+        return {
+          x: dateInMsWithoutOffset,
+          y: datum.value,
+        };
+      });
       return {
-        x: dateInMsWithoutTZ,
-        y: item.value,
+        chartData,
+        state: result.data?.metaData.state,
+        interval: result.data?.metaData.interval,
       };
     });
 
     const chartdata = {
-      datasets: [
-        {
-          label: 'yearly',
-          data: finalData,
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          borderColor: 'rgb(255, 99, 132)',
+      datasets: dataSets.map((dataSet) => {
+        return {
+          label: dataSet.state || 'Unknown',
+          data: dataSet.chartData || [{ x: 0, y: 0 }],
+          backgroundColor:
+            states.find((state) => state.paramValue === dataSet.state)
+              ?.chartBackgroundColor || 'rgba(0,0,0,0.5)',
+          borderColor:
+            states.find((state) => state.paramValue === dataSet.state)
+              ?.chartBorderColor || 'rgb(0,0,0)',
           borderWidth: 1,
-        },
-      ],
+        };
+      }),
     };
 
     return (
@@ -83,35 +140,38 @@ export default function Home() {
         <main>
           <h1 className="text-black">Hello World!</h1>
 
-          {/* <div className="w-full flex gap-8 px-2">
+          <div className="w-full flex gap-8 px-2">
             <DropdownMenu
               buttonLabel="Attribute"
-              menuItems={['Daily', 'Blood A']}
+              menuItems={attributes
+                .filter((attribute) => attribute.category == 'donation')
+                .map((attribute) => attribute.displayName)}
               handleOnClick={handleDropdownOnClick}
               buttonIcon={<ChevronDown size="sm" />}
-              selectedItem={selected}
+              selectedItem={attribute.displayName}
             />
 
             <SelectionGroup
-              options={[
-                { id: 1, label: 'Daily' },
-                { id: 2, label: 'Monthly' },
-                { id: 3, label: 'Yearly' },
-              ]}
-              handleOnChange={setInterval}
-              value={interval}
+              options={intervals.map((interval) => {
+                return {
+                  id: interval.id,
+                  label: interval.displayName,
+                };
+              })}
+              handleOnChange={handleIntervalOnChange}
+              value={interval.id}
             />
 
             <MultiSelectListBox
               buttonLabel="States"
-              options={[
-                { id: 1, label: 'Kuala Lumpur' },
-                { id: 2, label: 'Melaka' },
-                { id: 3, label: 'Johor' },
-                { id: 4, label: 'Sarawak' },
-              ]}
-              handleOnChange={setStates}
-              value={states}
+              options={states.map((state) => {
+                return {
+                  id: state.id,
+                  label: state.displayName,
+                };
+              })}
+              handleOnChange={handleStatesOnChange}
+              value={state.map((item) => item.id)}
               optionWithIcon={false}
             />
           </div>
@@ -120,7 +180,7 @@ export default function Home() {
               chartData={chartdata}
               options={options}
             />
-          </div> */}
+          </div>
         </main>
       </>
     );

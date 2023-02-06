@@ -3,7 +3,7 @@ import axios from 'axios';
 axios.defaults.baseURL = process.env.API_URL ?? 'http://localhost:5242/api/v1/';
 
 export const requests = {
-  get: <ResType>(url: string, params?: URLSearchParams) =>
+  get: <ResType>(url: string, params?: URLSearchParams): Promise<ResType> =>
     axios
       .get<ResType>(url, { params })
       .then((response) => response.data)
