@@ -1,9 +1,12 @@
+export type RecordCategory = 'donation' | 'newdonor';
+
 export type Attribute = {
   id: number;
   displayName: string;
   pathName: string;
-  category: string;
+  category: RecordCategory;
 };
+
 //TODO: create mapping object for path
 export const attributes: Attribute[] = [
   { id: 1, displayName: 'Daily', pathName: 'daily', category: 'donation' },
@@ -150,3 +153,8 @@ export const attributes: Attribute[] = [
   },
   { id: 28, displayName: 'Total', pathName: 'total', category: 'newdonor' },
 ];
+
+export const defaultAttribute = {
+  donation: attributes.find((a) => a.displayName === 'Daily'),
+  newdonor: attributes.find((a) => a.displayName === 'Total'),
+};

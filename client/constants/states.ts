@@ -108,3 +108,5 @@ export const states: State[] = [
     chartBorderColor: 'rgb(157, 60, 114)',
   },
 ];
+
+export const defaultState = states.filter((s) => s.displayName === 'Malaysia');
