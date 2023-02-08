@@ -16,7 +16,7 @@ const LineChart = dynamic(() => import('@/components/common/LineChart'), {
   ssr: false,
 });
 
-export default function DonationChartSession() {
+export default function NewDonorChartSession() {
   const {
     attribute,
     setAttribute,
@@ -25,7 +25,7 @@ export default function DonationChartSession() {
     state,
     setState,
     results,
-  } = useChart('donation');
+  } = useChart('newdonor');
   const datasets = useRef<ChartDataset<'line'>[]>([{ label: '', data: [] }]);
   const matches = useMediaQuery('(min-width: 768px)');
 
@@ -93,7 +93,7 @@ export default function DonationChartSession() {
         <DropdownMenu
           buttonLabel="Attribute"
           menuItems={attributes
-            .filter((attribute) => attribute.category == 'donation')
+            .filter((attribute) => attribute.category == 'newdonor')
             .map((attribute) => attribute.displayName)}
           handleOnClick={handleDropdownOnClick}
           buttonIcon={<ChevronDown size="sm" />}

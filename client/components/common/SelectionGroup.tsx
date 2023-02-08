@@ -5,6 +5,7 @@ interface Props {
   options: option[];
   value: number | undefined;
   handleOnChange: (item: number) => void;
+  fullWidth?: boolean;
 }
 
 export type option = {
@@ -16,39 +17,42 @@ export type option = {
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
-//TODO: add active state style
+
 export default function SelectionGroup({
   options,
   value,
   handleOnChange,
+  fullWidth = false,
 }: Props) {
   return (
-    <div>
-      <RadioGroup
-        value={value}
-        onChange={handleOnChange}
-        className="flex border rounded-md border-gray-200 max-w-fit h-[34px] divide-x-[0.1rem] overflow-hidden"
-      >
-        {options.map((option) => (
-          <RadioGroup.Option
-            key={option.id}
-            value={option.id}
-          >
-            {({ checked }) => (
-              <span
-                className={classNames(
-                  checked
-                    ? 'bg-black text-white cursor-default font-semibold'
-                    : 'text-gray-400 cursor-pointer',
-                  'text-md py-2 px-2 align-middle'
-                )}
-              >
-                {option.label}
-              </span>
-            )}
-          </RadioGroup.Option>
-        ))}
-      </RadioGroup>
-    </div>
+    <RadioGroup
+      as="div"
+      value={value}
+      onChange={handleOnChange}
+      className={`flex border rounded-md border-gray-200 min-w-fit h-[34px] divide-x-[0.1rem] overflow-hidden ${
+        fullWidth && 'w-full'
+      }`}
+    >
+      {options.map((option) => (
+        <RadioGroup.Option
+          key={option.id}
+          value={option.id}
+          className="grow"
+        >
+          {({ checked }) => (
+            <button
+              className={classNames(
+                checked
+                  ? 'bg-black text-white cursor-default font-semibold'
+                  : 'text-gray-400 cursor-pointer',
+                'text-md align-middle w-full h-full px-2'
+              )}
+            >
+              {option.label}
+            </button>
+          )}
+        </RadioGroup.Option>
+      ))}
+    </RadioGroup>
   );
 }
