@@ -88,52 +88,54 @@ export default function DonationChartSession() {
   }
 
   return (
-    <div className="w-full max-w-5xl">
-      <div className="inline-flex w-full flex-wrap justify-between items-center gap-2">
-        <DropdownMenu
-          buttonLabel="Attribute"
-          menuItems={attributes
-            .filter((attribute) => attribute.category == 'donation')
-            .map((attribute) => attribute.displayName)}
-          handleOnClick={handleDropdownOnClick}
-          buttonIcon={<ChevronDown size="sm" />}
-          selectedItem={attribute.displayName}
-          fullWidth={matches ? false : true}
-        />
+    <div className="container justify-center flex">
+      <div className="w-full max-w-5xl">
+        <div className="inline-flex w-full flex-wrap justify-between items-center gap-2">
+          <DropdownMenu
+            buttonLabel="Attribute"
+            menuItems={attributes
+              .filter((attribute) => attribute.category == 'donation')
+              .map((attribute) => attribute.displayName)}
+            handleOnClick={handleDropdownOnClick}
+            buttonIcon={<ChevronDown size="sm" />}
+            selectedItem={attribute.displayName}
+            fullWidth={matches ? false : true}
+          />
 
-        <SelectionGroup
-          options={intervals.map((interval) => {
-            return {
-              id: interval.id,
-              label: interval.displayName,
-            };
-          })}
-          handleOnChange={handleIntervalOnChange}
-          value={interval.id}
-          fullWidth={matches ? false : true}
-        />
+          <SelectionGroup
+            options={intervals.map((interval) => {
+              return {
+                id: interval.id,
+                label: interval.displayName,
+              };
+            })}
+            handleOnChange={handleIntervalOnChange}
+            value={interval.id}
+            fullWidth={matches ? false : true}
+          />
 
-        <MultiSelectListBox
-          buttonLabel="States"
-          options={states.map((state) => {
-            return {
-              id: state.id,
-              label: state.displayName,
-            };
-          })}
-          handleOnChange={handleStatesOnChange}
-          value={state.map((item) => item.id)}
-          optionWithIcon={false}
-          fullWidth={matches ? false : true}
-        />
-      </div>
-      <div className="w-full h-full relative aspect-[2]">
-        <LineChart
-          options={options}
-          chartData={{
-            datasets: datasets.current,
-          }}
-        />
+          <MultiSelectListBox
+            buttonLabel="States"
+            options={states.map((state) => {
+              return {
+                id: state.id,
+                label: state.displayName,
+              };
+            })}
+            handleOnChange={handleStatesOnChange}
+            value={state.map((item) => item.id)}
+            optionWithIcon={false}
+            fullWidth={matches ? false : true}
+          />
+        </div>
+        <div className="w-full h-full relative aspect-[2] py-5">
+          <LineChart
+            options={options}
+            chartData={{
+              datasets: datasets.current,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

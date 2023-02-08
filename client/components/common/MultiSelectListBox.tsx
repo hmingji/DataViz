@@ -26,7 +26,7 @@ export default function MultiSelectListBox({
       value={value}
       onChange={handleOnChange}
       multiple
-      className={`relative inline-block min-w-[13rem] ${fullWidth && 'w-full'}`}
+      className={`relative inline-block ${fullWidth ? 'w-full' : 'w-[13rem]'}`}
       as="div"
     >
       <Listbox.Button className="w-full inline-flex items-center justify-between border border-gray-200 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-500">

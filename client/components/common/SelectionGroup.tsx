@@ -29,8 +29,8 @@ export default function SelectionGroup({
       as="div"
       value={value}
       onChange={handleOnChange}
-      className={`flex border rounded-md border-gray-200 min-w-fit h-[34px] divide-x-[0.1rem] overflow-hidden ${
-        fullWidth && 'w-full'
+      className={`flex border rounded-md border-gray-200 h-[34px] divide-x-[0.1rem] overflow-hidden ${
+        fullWidth ? 'w-full' : 'w-fit'
       }`}
     >
       {options.map((option) => (

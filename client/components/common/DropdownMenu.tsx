@@ -21,7 +21,7 @@ export default function DropdownMenu({
   return (
     <Menu
       as="div"
-      className={`relative inline-block min-w-[13rem] ${fullWidth && 'w-full'}`}
+      className={`relative inline-block ${fullWidth ? 'w-full' : 'w-[13rem]'}`}
     >
       <Menu.Button className="w-full">
         {({ open }) => (
