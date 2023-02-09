@@ -113,7 +113,7 @@ export default function NewDonorChartSession() {
 
   return (
     <div className="container justify-center flex">
-      <div className="w-full max-w-5xl">
+      <div className="w-full max-w-[90vw] xl:max-w-5xl">
         <div className="inline-flex w-full flex-wrap justify-between items-center gap-2">
           <DropdownMenu
             buttonLabel="Attribute"
@@ -149,7 +149,7 @@ export default function NewDonorChartSession() {
             optionWithIcon={false}
           />
         </div>
-        <div className="w-full h-full relative aspect-[2] py-5">
+        <div className="w-full h-full relative aspect-[2] py-5 flex flex-col">
           <ForwardedLineChart
             ref={chartRef}
             options={options}
@@ -157,7 +157,7 @@ export default function NewDonorChartSession() {
               datasets: datasets.current,
             }}
           />
-          <div className="absolute bottom-5 right-0">
+          <div>
             <Button
               label="Reset"
               icon={<MagnifyingGlass size="sm" />}

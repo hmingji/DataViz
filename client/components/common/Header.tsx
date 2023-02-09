@@ -1,7 +1,7 @@
 export default function Header() {
   return (
     <header className="container mx-auto px-2 py-10 flex justify-center">
-      <div className="max-w-5xl flex justify-left w-full">
+      <div className="max-w-[90vw] xl:max-w-5xl flex justify-left w-full">
         <div className="max-w-2xl">
           <h1 className="text-5xl">
             What are the blood donation trends in Malaysia
