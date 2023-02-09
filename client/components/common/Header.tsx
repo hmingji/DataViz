@@ -6,7 +6,7 @@ export default function Header() {
           <h1 className="text-5xl">
             What are the blood donation trends in Malaysia
           </h1>
-          <p className="text-lg text-gray-500 py-4">
+          <p className="text-lg text-black py-4">
             Visualize variety of statistics related to blood donation starting
             from year 2006. These charts support zoom and pan feature: use
             scroll or drag to zoom and use &apos;ctrl&apos; + drag to pan.

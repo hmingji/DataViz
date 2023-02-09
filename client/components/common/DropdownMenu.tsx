@@ -24,7 +24,7 @@ export default function DropdownMenu({
       <Menu.Button className="w-full">
         {({ open }) => (
           <span
-            className={`flex items-center justify-between w-full border border-gray-200 rounded-md px-2 py-1 text-md font-semibold hover:border-gray-500 ${
+            className={`flex items-center justify-between w-full border border-gray-500 rounded-md px-2 py-1 text-md font-semibold hover:border-gray-900 ${
               open && 'border-gray-500'
             }`}
           >

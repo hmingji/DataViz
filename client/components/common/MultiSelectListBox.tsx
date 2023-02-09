@@ -27,7 +27,7 @@ export default function MultiSelectListBox({
       className={`relative inline-block w-full md:w-[13rem]`}
       as="div"
     >
-      <Listbox.Button className="w-full inline-flex items-center justify-between border border-gray-200 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-500">
+      <Listbox.Button className="w-full inline-flex items-center justify-between border border-gray-500 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-900">
         <span className={`grow md:text-left`}>{buttonLabel}</span>
         <ChevronUpDown size="md" />
       </Listbox.Button>

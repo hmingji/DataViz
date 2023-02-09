@@ -27,7 +27,7 @@ export default function SelectionGroup({
       as="div"
       value={value}
       onChange={handleOnChange}
-      className={`flex border rounded-md border-gray-200 h-[34px] divide-x-[0.1rem] overflow-hidden w-full md:w-fit`}
+      className={`flex border rounded-md border-gray-500 h-[34px] divide-x-[0.1rem] divide-gray-500 overflow-hidden w-full md:w-fit`}
     >
       {options.map((option) => (
         <RadioGroup.Option
@@ -40,7 +40,7 @@ export default function SelectionGroup({
               className={classNames(
                 checked
                   ? 'bg-black text-white cursor-default font-semibold'
-                  : 'text-gray-400 cursor-pointer',
+                  : 'text-gray-700 cursor-pointer',
                 'text-md align-middle w-full h-full px-2'
               )}
             >
