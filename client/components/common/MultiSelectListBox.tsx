@@ -9,7 +9,6 @@ interface Props {
   handleOnChange: (ids: number[]) => void;
   value: number[];
   optionWithIcon: boolean;
-  fullWidth?: boolean;
 }
 
 export default function MultiSelectListBox({
@@ -18,7 +17,6 @@ export default function MultiSelectListBox({
   handleOnChange,
   value,
   optionWithIcon,
-  fullWidth = false,
 }: Props) {
   const hasSelected = value.length > 0;
   return (
@@ -26,13 +24,11 @@ export default function MultiSelectListBox({
       value={value}
       onChange={handleOnChange}
       multiple
-      className={`relative inline-block ${fullWidth ? 'w-full' : 'w-[13rem]'}`}
+      className={`relative inline-block w-full md:w-[13rem]`}
       as="div"
     >
       <Listbox.Button className="w-full inline-flex items-center justify-between border border-gray-200 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-500">
-        <span className={`grow ${!fullWidth && 'text-left'}`}>
-          {buttonLabel}
-        </span>
+        <span className={`grow md:text-left`}>{buttonLabel}</span>
         <ChevronUpDown size="md" />
       </Listbox.Button>
 

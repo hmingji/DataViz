@@ -1,5 +1,8 @@
+import Button from '@/components/common/Button';
 import DropdownMenu from '@/components/common/DropdownMenu';
+import { ArrowPathSpin } from '@/components/common/Icons/ArrowPathSpin';
 import { ChevronDown } from '@/components/common/Icons/ChevronDown';
+import MagnifyingGlass from '@/components/common/Icons/MagnifyingGlass';
 import MultiSelectListBox from '@/components/common/MultiSelectListBox';
 import SelectionGroup from '@/components/common/SelectionGroup';
 import { attributes } from '@/constants/attributes';
@@ -8,13 +11,27 @@ import { states } from '@/constants/states';
 import { useChart } from '@/hooks/useChart';
 import { generateChartDataset } from '@/utils/generateChartDataset';
 import getChartMinDate from '@/utils/getChartMinDate';
-import { ChartDataset, ChartOptions } from 'chart.js';
+import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
 import dynamic from 'next/dynamic';
-import { useRef } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
+import { forwardRef, useRef } from 'react';
+import { ChartJSOrUndefined } from 'react-chartjs-2/dist/types';
 const LineChart = dynamic(() => import('@/components/common/LineChart'), {
   ssr: false,
 });
+
+const ForwardedLineChart = forwardRef<
+  ChartJSOrUndefined<'line'>,
+  {
+    chartData: ChartData<'line'>;
+    options: ChartOptions<'line'>;
+  }
+>((props, ref) => (
+  <LineChart
+    forwardRef={ref}
+    {...props}
+  />
+));
+ForwardedLineChart.displayName = 'ForwardedLineChart';
 
 export default function DonationChartSession() {
   const {
@@ -27,7 +44,7 @@ export default function DonationChartSession() {
     results,
   } = useChart('donation');
   const datasets = useRef<ChartDataset<'line'>[]>([{ label: '', data: [] }]);
-  const matches = useMediaQuery('(min-width: 768px)');
+  const chartRef = useRef<ChartJSOrUndefined<'line'>>(null);
 
   if (results.every((result) => result.isSuccess == true && result.data))
     datasets.current = results.map((r) => generateChartDataset(r.data!));
@@ -66,6 +83,9 @@ export default function DonationChartSession() {
           mode: 'x',
           modifierKey: 'ctrl',
         },
+        limits: {
+          x: { min: interval.chartLimit.min, max: interval.chartLimit.max },
+        },
       },
     },
   };
@@ -87,6 +107,10 @@ export default function DonationChartSession() {
     if (latestStates) setState(latestStates);
   }
 
+  function resetChartZoomState() {
+    chartRef.current?.resetZoom();
+  }
+
   return (
     <div className="container justify-center flex">
       <div className="w-full max-w-5xl">
@@ -99,7 +123,6 @@ export default function DonationChartSession() {
             handleOnClick={handleDropdownOnClick}
             buttonIcon={<ChevronDown size="sm" />}
             selectedItem={attribute.displayName}
-            fullWidth={matches ? false : true}
           />
 
           <SelectionGroup
@@ -111,7 +134,6 @@ export default function DonationChartSession() {
             })}
             handleOnChange={handleIntervalOnChange}
             value={interval.id}
-            fullWidth={matches ? false : true}
           />
 
           <MultiSelectListBox
@@ -125,16 +147,28 @@ export default function DonationChartSession() {
             handleOnChange={handleStatesOnChange}
             value={state.map((item) => item.id)}
             optionWithIcon={false}
-            fullWidth={matches ? false : true}
           />
         </div>
         <div className="w-full h-full relative aspect-[2] py-5">
-          <LineChart
+          <ForwardedLineChart
+            ref={chartRef}
             options={options}
             chartData={{
               datasets: datasets.current,
             }}
           />
+          <div className="absolute bottom-5 right-0">
+            <Button
+              label="Reset"
+              icon={<MagnifyingGlass size="sm" />}
+              handleOnClick={resetChartZoomState}
+            />
+          </div>
+          {!results.every((result) => result.isSuccess) && (
+            <div className="absolute top-1/2 left-1/2">
+              <ArrowPathSpin size="lg" />
+            </div>
+          )}
         </div>
       </div>
     </div>

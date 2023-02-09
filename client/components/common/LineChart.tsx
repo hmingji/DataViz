@@ -12,6 +12,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { Ref } from 'react';
+import { ChartJSOrUndefined } from 'react-chartjs-2/dist/types';
+//import React from 'react';
 
 ChartJS.register(
   zoomPlugin,
@@ -27,13 +30,15 @@ ChartJS.register(
 interface Props {
   chartData: ChartData<'line'>;
   options: ChartOptions<'line'>;
+  forwardRef?: Ref<ChartJSOrUndefined<'line'>>;
 }
 //TODO: toggle option and data change, zoomable
-export default function LineChart({ chartData, options }: Props) {
+export default function LineChart({ chartData, options, forwardRef }: Props) {
   return (
     <>
       {typeof window !== 'undefined' && (
         <Line
+          ref={forwardRef}
           data={chartData}
           options={options}
         />

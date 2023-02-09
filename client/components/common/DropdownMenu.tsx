@@ -7,7 +7,6 @@ interface Props {
   handleOnClick: (item: string) => void;
   buttonIcon?: ReactNode;
   selectedItem: string | undefined;
-  fullWidth?: boolean;
 }
 //TODO: allow width variantion and font color diff for srlected items
 export default function DropdownMenu({
@@ -16,12 +15,11 @@ export default function DropdownMenu({
   handleOnClick,
   buttonIcon,
   selectedItem,
-  fullWidth = false,
 }: Props) {
   return (
     <Menu
       as="div"
-      className={`relative inline-block ${fullWidth ? 'w-full' : 'w-[13rem]'}`}
+      className={`relative inline-block w-full md:w-[13rem]`}
     >
       <Menu.Button className="w-full">
         {({ open }) => (
@@ -30,7 +28,7 @@ export default function DropdownMenu({
               open && 'border-gray-500'
             }`}
           >
-            <span className={`grow ${!fullWidth && 'text-left'}`}>
+            <span className={`grow md:text-left`}>
               {selectedItem ? selectedItem : buttonLabel}{' '}
             </span>
             {buttonIcon}

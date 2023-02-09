@@ -8,8 +8,9 @@ export default function Header() {
           </h1>
           <p className="text-lg text-gray-500 py-4">
             Visualize variety of statistics related to blood donation starting
-            from year 2006. These charts support zoom and pan feature: scroll or
-            drag to zoom and &apos;ctrl&apos; + drag to pan. Inspire by{' '}
+            from year 2006. These charts support zoom and pan feature: use
+            scroll or drag to zoom and use &apos;ctrl&apos; + drag to pan.
+            Inspire by{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
