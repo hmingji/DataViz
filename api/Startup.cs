@@ -49,9 +49,10 @@ namespace api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api v1"));
             }
+            string clientUrl = Configuration.GetValue<string>("ClientUrl");
 
             app.UseRouting();
-            app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
+            app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl));
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -61,8 +62,8 @@ namespace api
             provider.UseScheduler(schedular => 
             {
                 schedular.Schedule<RetrieveDataFromGithub>()
-                    .DailyAt(8 + 8, 0);
-                    //.RunOnceAtStart(); //for development purpose
+                    .DailyAt(8 + 8, 0)
+                    .RunOnceAtStart(); //for development purpose
             });
         }
     }
