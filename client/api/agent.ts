@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = process.env.API_URL ?? 'http://localhost:3000/api/v1/';
+axios.defaults.baseURL =
+  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api/v1/';
 
 export const requests = {
   get: <ResType>(url: string, params?: URLSearchParams): Promise<ResType> =>
