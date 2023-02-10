@@ -9,7 +9,12 @@ export type Attribute = {
 
 //TODO: create mapping object for path
 export const attributes: Attribute[] = [
-  { id: 1, displayName: 'Daily', pathName: 'daily', category: 'donation' },
+  {
+    id: 1,
+    displayName: 'Total Donation',
+    pathName: 'daily',
+    category: 'donation',
+  },
   { id: 2, displayName: 'Blood A', pathName: 'blood_a', category: 'donation' },
   { id: 3, displayName: 'Blood B', pathName: 'blood_b', category: 'donation' },
   { id: 4, displayName: 'Blood O', pathName: 'blood_o', category: 'donation' },
@@ -151,10 +156,15 @@ export const attributes: Attribute[] = [
     pathName: 'agegroupother',
     category: 'newdonor',
   },
-  { id: 28, displayName: 'Total', pathName: 'total', category: 'newdonor' },
+  {
+    id: 28,
+    displayName: 'Total New Donor',
+    pathName: 'total',
+    category: 'newdonor',
+  },
 ];
 
 export const defaultAttribute = {
-  donation: attributes.find((a) => a.displayName === 'Daily'),
-  newdonor: attributes.find((a) => a.displayName === 'Total'),
+  donation: attributes.find((a) => a.displayName === 'Total Donation'),
+  newdonor: attributes.find((a) => a.displayName === 'Total New Donor'),
 };

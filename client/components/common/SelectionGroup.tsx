@@ -39,7 +39,7 @@ export default function SelectionGroup({
             <button
               className={classNames(
                 checked
-                  ? 'bg-black text-white cursor-default font-semibold'
+                  ? 'bg-black text-white cursor-default font-semibold border-black border'
                   : 'text-gray-700 cursor-pointer',
                 'text-md align-middle w-full h-full px-2'
               )}

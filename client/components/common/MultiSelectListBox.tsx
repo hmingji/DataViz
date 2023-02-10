@@ -37,7 +37,7 @@ export default function MultiSelectListBox({
           {value.length}
         </span>
       )}
-      <Listbox.Options className="w-full absolute left-0 origin-top-left rounded-md shadow-lg px-1 py-1 bg-white z-20">
+      <Listbox.Options className="w-full absolute left-0 origin-top-left rounded-md shadow-lg px-1 py-1 bg-white z-50">
         {options.map((option) => (
           <Listbox.Option
             key={option.id}

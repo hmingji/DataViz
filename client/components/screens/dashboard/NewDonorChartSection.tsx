@@ -18,6 +18,11 @@ import { ChartJSOrUndefined } from 'react-chartjs-2/dist/types';
 const LineChart = dynamic(() => import('@/components/common/LineChart'), {
   ssr: false,
 });
+import { Inter } from '@next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+});
 
 const ForwardedLineChart = forwardRef<
   ChartJSOrUndefined<'line'>,
@@ -33,7 +38,7 @@ const ForwardedLineChart = forwardRef<
 ));
 ForwardedLineChart.displayName = 'ForwardedLineChart';
 
-export default function DonationChartSession() {
+export default function NewDonorChartSection() {
   const {
     attribute,
     setAttribute,
@@ -42,7 +47,7 @@ export default function DonationChartSession() {
     state,
     setState,
     results,
-  } = useChart('donation');
+  } = useChart('newdonor');
   const datasets = useRef<ChartDataset<'line'>[]>([{ label: '', data: [] }]);
   const chartRef = useRef<ChartJSOrUndefined<'line'>>(null);
 
@@ -112,13 +117,18 @@ export default function DonationChartSession() {
   }
 
   return (
-    <div className="container justify-center flex">
-      <div className="w-full max-w-[90vw] xl:max-w-5xl">
+    <section className="container justify-center flex z-20">
+      <div className="w-full max-w-[90vw] xl:max-w-5xl relative">
+        <header className="pb-4">
+          <h1 className={`text-2xl font-bold ${inter.className}`}>
+            New donor trend by age group
+          </h1>
+        </header>
         <div className="inline-flex w-full flex-wrap justify-between items-center gap-2">
           <DropdownMenu
             buttonLabel="Attribute"
             menuItems={attributes
-              .filter((attribute) => attribute.category == 'donation')
+              .filter((attribute) => attribute.category == 'newdonor')
               .map((attribute) => attribute.displayName)}
             handleOnClick={handleDropdownOnClick}
             buttonIcon={<ChevronDown size="sm" />}
@@ -149,7 +159,7 @@ export default function DonationChartSession() {
             optionWithIcon={false}
           />
         </div>
-        <div className="w-full h-full relative aspect-[2] flex flex-col py-5">
+        <div className="w-full h-full relative aspect-[2] py-5 flex flex-col">
           <ForwardedLineChart
             ref={chartRef}
             options={options}
@@ -157,7 +167,6 @@ export default function DonationChartSession() {
               datasets: datasets.current,
             }}
           />
-
           <div>
             <Button
               label="Reset"
@@ -165,14 +174,13 @@ export default function DonationChartSession() {
               handleOnClick={resetChartZoomState}
             />
           </div>
-
-          {!results.every((result) => result.isSuccess) && (
-            <div className="absolute top-1/2 left-1/2">
-              <ArrowPathSpin size="lg" />
-            </div>
-          )}
         </div>
+        {!results.every((result) => result.isSuccess) && (
+          <div className="absolute top-1/2 left-1/2">
+            <ArrowPathSpin size="lg" />
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }
