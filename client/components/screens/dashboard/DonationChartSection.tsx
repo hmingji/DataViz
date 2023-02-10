@@ -118,7 +118,7 @@ export default function DonationChartSection() {
 
   return (
     <section className="container justify-center flex">
-      <div className="w-full max-w-[90vw] xl:max-w-5xl">
+      <div className="w-full max-w-[90vw] xl:max-w-5xl relative">
         <header className="pb-4">
           <h1 className={`text-2xl font-bold ${inter.className}`}>
             Donation trend by key variables:
@@ -179,13 +179,12 @@ export default function DonationChartSection() {
               handleOnClick={resetChartZoomState}
             />
           </div>
-
-          {!results.every((result) => result.isSuccess) && (
-            <div className="absolute top-1/2 left-1/2">
-              <ArrowPathSpin size="lg" />
-            </div>
-          )}
         </div>
+        {!results.every((result) => result.isSuccess) && (
+          <div className="absolute top-1/2 left-1/2">
+            <ArrowPathSpin size="lg" />
+          </div>
+        )}
       </div>
     </section>
   );
