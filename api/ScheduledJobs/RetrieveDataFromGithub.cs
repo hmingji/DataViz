@@ -29,17 +29,17 @@ namespace api.ScheduledJobs
 
         public async Task Invoke()
         {
-            string header = _configuration.GetValue<string>("GithubDataSource:Header");
-            string token = _configuration.GetValue<string>("GithubDataSource:Token");
-            string repoOwner = _configuration.GetValue<string>("GithubDataSource:RepoOwner");
-            string repoName = _configuration.GetValue<string>("GithubDataSource:RepoName");
+            string header = _configuration.GetValue<string>("GithubDataSource:Header") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
+            string token = _configuration.GetValue<string>("GithubDataSource:Token") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");;
+            string repoOwner = _configuration.GetValue<string>("GithubDataSource:RepoOwner") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");;
+            string repoName = _configuration.GetValue<string>("GithubDataSource:RepoName") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPONAME");;
             
             var githubClient = new GitHubClient(new ProductHeaderValue(header));
             var tokenAuth = new Credentials(token);
             githubClient.Credentials = tokenAuth;   
             var results = await githubClient.Repository.Content.GetAllContents(repoOwner, repoName);
             
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection"));
+            using var connection = new NpgsqlConnection(getConnectionString());
             connection.Open();
             try
             {
@@ -64,6 +64,33 @@ namespace api.ScheduledJobs
             }
         }
 
+        private string getConnectionString() {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            string connStr;
+
+            if (env == "Development")
+            {
+                connStr = _configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            }
+            else
+            {
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostDb = connUrl.Split("@")[1];
+                var pgHost = pgHostDb.Split("/")[0];
+                var pgDb = pgHostDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgPort = 5432;
+
+                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+            }
+            return connStr;
+        }
+        
         private async Task InitializeTable(NpgsqlConnection connection)
         {
             try

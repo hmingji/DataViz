@@ -21,7 +21,7 @@ namespace api.Repositories
 
         public async Task<List<DonationRecord>> GetRecords(string state, DateOnly startDate, DateOnly endDate)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
         
             List<DonationRecord> records = (await connection.QueryAsync<DonationRecord>("SELECT * FROM DonationRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate", new { state = state, startDate = startDate, endDate = endDate })).ToList();
         
@@ -30,7 +30,7 @@ namespace api.Repositories
 
         public async Task<bool> CreateRecord(DonationRecord record)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
             
             var affected = await connection.ExecuteAsync("INSERT INTO DonationRecord (Date, State, Daily, Blood_A, Blood_B, Blood_O, Blood_AB, Location_Centre, Location_Mobile, Type_WholeBlood, Type_ApheresisPlatelet, Type_ApheresisPlasma, Type_Other, Social_Civilian, Social_Student, Social_PoliceArmy, Donor_New, Donor_Regular, Donor_Irregular) VALUES (@date, @state, @daily, @blood_A, @blood_B, @blood_O, @blood_AB, @location_Centre, @location_Mobile, @type_WholeBlood, @type_ApheresisPlatelet, @type_ApheresisPlasma, @type_Other, @social_Civilian, @social_Student, @social_PoliceArmy, @donor_New, @donor_Regular, @donor_Irregular)", 
                 new { date=record.Date, state=record.State, daily=record.Daily, blood_A=record.Blood_A, blood_B=record.Blood_B, blood_O=record.Blood_O, blood_AB=record.Blood_AB, location_Centre=record.Location_Centre, location_Mobile=record.Location_Mobile, type_WholeBlood=record.Type_WholeBlood, type_ApheresisPlatelet=record.Type_ApheresisPlatelet, type_ApheresisPlasma=record.Type_ApheresisPlasma, type_Other=record.Type_Other, social_Civilian=record.Social_Civilian, social_Student=record.Social_Student, social_PoliceArmy=record.Social_PoliceArmy, donor_New=record.Donor_New, donor_Regular=record.Donor_Regular, donor_Irregular=record.Donor_Irregular });
@@ -43,7 +43,7 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetDailyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getDailyDataQueryBasedOnAttribute(attribute);
 
@@ -54,7 +54,7 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getMonthlyDataQueryBasedOnAttribute(attribute);
 
@@ -65,13 +65,40 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetYearlyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getYearlyDataQueryBasedOnAttribute(attribute);
 
             List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
 
             return data;
+        }
+
+        private string getConnectionString() {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            string connStr;
+
+            if (env == "Development")
+            {
+                connStr = _configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            }
+            else
+            {
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostDb = connUrl.Split("@")[1];
+                var pgHost = pgHostDb.Split("/")[0];
+                var pgDb = pgHostDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgPort = 5432;
+
+                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+            }
+            return connStr;
         }
 
         private string getDailyDataQueryBasedOnAttribute(string attribute)

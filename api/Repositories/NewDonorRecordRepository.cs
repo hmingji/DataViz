@@ -21,7 +21,7 @@ namespace api.Repositories
 
         public async Task<List<NewDonorRecord>> GetRecords(string state, DateOnly startDate, DateOnly endDate)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
         
             List<NewDonorRecord> records = (await connection.QueryAsync<NewDonorRecord>("SELECT * FROM NewDonorRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate", new { state = state, startDate = startDate, endDate = endDate })).ToList();
         
@@ -30,7 +30,7 @@ namespace api.Repositories
 
         public async Task<bool> CreateRecord(NewDonorRecord record)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             var affected = await connection.ExecuteAsync("INSERT INTO NewDonorRecord (Date, State, AgeGroup17_24, AgeGroup25_29, AgeGroup30_34, AgeGroup35_39, AgeGroup40_44, AgeGroup45_49, AgeGroup50_54, AgeGroup55_59, AgeGroup60_64, AgeGroupOther, Total) VALUES (@date, @state, @ageGroup17_24, @ageGroup25_29, @ageGroup30_34, @ageGroup35_39, @ageGroup40_44, @ageGroup45_49, @ageGroup50_54, @ageGroup55_59, @ageGroup60_64, @ageGroupOther, @total)", 
                 new { date=record.Date, state=record.State, ageGroup17_24=record.AgeGroup17_24, ageGroup25_29=record.AgeGroup25_29, ageGroup30_34=record.AgeGroup30_34, ageGroup35_39=record.AgeGroup35_39, ageGroup40_44=record.AgeGroup40_44, ageGroup45_49=record.AgeGroup45_49, ageGroup50_54=record.AgeGroup50_54, ageGroup55_59=record.AgeGroup55_59, ageGroup60_64=record.AgeGroup60_64, ageGroupOther=record.AgeGroupOther, total=record.Total });
@@ -43,7 +43,7 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetDailyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getDailyDataQueryBasedOnAttribute(attribute);
 
@@ -54,7 +54,7 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getMonthlyDataQueryBasedOnAttribute(attribute);
 
@@ -65,13 +65,40 @@ namespace api.Repositories
 
         public async Task<List<TimeSeriesData>> GetYearlyRecords(string state, string attribute)
         {
-            using var connection = new NpgsqlConnection(_configuration.GetValue<string>("ConnectionStrings:DefaultConnection") ?? Environment.GetEnvironmentVariable("DbConnectionString"));
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query = getYearlyDataQueryBasedOnAttribute(attribute);
 
             List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
 
             return data;
+        }
+
+        private string getConnectionString() {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            string connStr;
+
+            if (env == "Development")
+            {
+                connStr = _configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+            }
+            else
+            {
+                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                connUrl = connUrl.Replace("postgres://", string.Empty);
+                var pgUserPass = connUrl.Split("@")[0];
+                var pgHostDb = connUrl.Split("@")[1];
+                var pgHost = pgHostDb.Split("/")[0];
+                var pgDb = pgHostDb.Split("/")[1];
+                var pgUser = pgUserPass.Split(":")[0];
+                var pgPass = pgUserPass.Split(":")[1];
+                var pgPort = 5432;
+
+                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+            }
+            return connStr;
         }
 
         private string getDailyDataQueryBasedOnAttribute(string attribute)
