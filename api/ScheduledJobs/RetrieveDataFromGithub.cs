@@ -45,6 +45,7 @@ namespace api.ScheduledJobs
             {
                 await InitializeTable(connection);
                 _logger.LogInformation("Completed initializing tables");
+                _logger.LogInformation(Environment.GetEnvironmentVariable("CLIENT_URL"));
                 
                 string donationRecordDownloadUrl = results.FirstOrDefault(item => item.Name == "donations_state.csv").DownloadUrl;
                 var donationRecordFetcher = new DataFetcher<DonationRecord, DonationRecordMap>(donationRecordDownloadUrl);
