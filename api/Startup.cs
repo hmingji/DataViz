@@ -50,7 +50,7 @@ namespace api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api v1"));
             }
             string clientUrl = Configuration.GetValue<string>("ClientUrl") ?? Environment.GetEnvironmentVariable("CLIENT_URL");
-
+            Console.WriteLine(clientUrl);
             app.UseRouting();
             app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl));
             app.UseEndpoints(endpoints =>

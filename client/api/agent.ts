@@ -6,7 +6,10 @@ axios.defaults.baseURL =
 export const requests = {
   get: <ResType>(url: string, params?: URLSearchParams): Promise<ResType> =>
     axios
-      .get<ResType>(url, { params })
+      .get<ResType>(url, {
+        params,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
       .then((response) => response.data)
       .catch((error) => {
         if (axios.isAxiosError(error)) {
