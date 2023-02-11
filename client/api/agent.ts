@@ -8,7 +8,7 @@ export const requests = {
     axios
       .get<ResType>(url, {
         params,
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        //headers: { 'Access-Control-Allow-Origin': '*' },
       })
       .then((response) => response.data)
       .catch((error) => {
