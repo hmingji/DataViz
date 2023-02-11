@@ -52,8 +52,9 @@ namespace api
             }
             string clientUrl = Configuration.GetValue<string>("ClientUrl") ?? Environment.GetEnvironmentVariable("CLIENT_URL");
             Console.WriteLine(clientUrl);
-            app.UseRouting();
+            
             app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl));
+            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
