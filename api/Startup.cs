@@ -42,7 +42,7 @@ namespace api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -53,6 +53,21 @@ namespace api
             string clientUrl = Configuration.GetValue<string>("ClientUrl") ?? Environment.GetEnvironmentVariable("CLIENT_URL");
             Console.WriteLine(clientUrl);
             
+            app.Use(async (context, next) =>
+            {
+                // Log/Print all Headers
+                foreach (var header in context.Request.Headers)
+                {
+                    logger.LogInformation("Header: {Key}: {Value}", header.Key, header.Value);
+                }
+            
+                logger.LogInformation("Request Method: {Method}", context.Request.Method);
+                logger.LogInformation("Request Scheme: {Scheme}", context.Request.Scheme);
+                logger.LogInformation("Request Path: {Path}", context.Request.Path);
+            
+                await next();
+            });
+
             app.UseCors(opt => 
             {
                 opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl);
