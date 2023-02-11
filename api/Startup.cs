@@ -30,6 +30,7 @@ namespace api
             services.AddScoped<INewDonorRecordRepository, NewDonorRecordRepository>();
             services.AddTransient<RetrieveDataFromGithub>();
             services.AddScheduler();
+            services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -37,7 +38,7 @@ namespace api
             });
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             DapperPlusManager.AddValueConverter<DateOnly>(new DateOnlyTypeHandlerPlus());
-            services.AddCors();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
