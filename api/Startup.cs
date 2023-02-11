@@ -67,13 +67,12 @@ namespace api
             
                 await next();
             });
-
+            app.UseRouting();
             app.UseCors(opt => 
             {
                 opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl);
             });
             
-            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
