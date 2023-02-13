@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="container mx-auto px-2 py-16 justify-center flex flex-col gap-2">
+    <footer className="container mx-auto px-2 py-16 justify-center flex flex-col gap-2 z-30">
       <p className="text-lg text-gray-500 text-center">
         Data Source:{' '}
         <a
