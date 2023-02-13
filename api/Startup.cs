@@ -73,7 +73,7 @@ namespace api
             app.UseRouting();
             app.UseCors(opt => 
             {
-                opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl);
             });
             
             app.UseEndpoints(endpoints =>
