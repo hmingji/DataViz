@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Middleware;
 using api.Repositories;
 using api.Repositories.Interfaces;
 using api.ScheduledJobs;
@@ -69,6 +70,7 @@ namespace api
             
                 await next();
             });
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
             app.UseCors(opt => 
             {
