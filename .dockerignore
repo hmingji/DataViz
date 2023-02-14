@@ -1,0 +1,8 @@
+**/bin
+**/obj
+**/.vscode
+**/.vs
+**/node_modules
+**/.next
+**/.vercel
+README.md

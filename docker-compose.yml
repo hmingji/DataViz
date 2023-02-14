@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSTGRES_DB=blooddonationdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/posgressql
+
+  api:
+    container_name: api
+    image: blooddonation-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - '80:80'
+    depends_on:
+      - db
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+
+  client:
+    container_name: client
+    image: blooddonation-client
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+      - db
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+
+volumes:
+  db:
