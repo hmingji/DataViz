@@ -21,7 +21,10 @@ export default function DropdownMenu({
       as="div"
       className={`relative inline-block w-full md:w-[13rem]`}
     >
-      <Menu.Button className="w-full">
+      <Menu.Button
+        className="w-full"
+        aria-label="dropdown-button"
+      >
         {({ open }) => (
           <span
             className={`flex items-center justify-between w-full border border-gray-500 rounded-md px-2 py-1 text-md font-semibold hover:border-gray-900 ${

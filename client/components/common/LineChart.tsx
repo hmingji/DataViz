@@ -41,6 +41,7 @@ export default function LineChart({ chartData, options, forwardRef }: Props) {
           ref={forwardRef}
           data={chartData}
           options={options}
+          role="line-chart"
         />
       )}
     </>

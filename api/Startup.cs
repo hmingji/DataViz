@@ -83,8 +83,8 @@ namespace api
             provider.UseScheduler(schedular => 
             {
                 schedular.Schedule<RetrieveDataFromGithub>()
-                    .DailyAt(8 + 8, 0)
-                    .RunOnceAtStart(); //for development purpose
+                    .DailyAt(8 + 8, 0);
+                    //.RunOnceAtStart(); //for development purpose
             });
         }
     }

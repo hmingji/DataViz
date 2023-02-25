@@ -27,13 +27,20 @@ export default function MultiSelectListBox({
       className={`relative inline-block w-full md:w-[13rem]`}
       as="div"
     >
-      <Listbox.Button className="w-full inline-flex items-center justify-between border border-gray-500 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-900">
+      <Listbox.Button
+        className="w-full inline-flex items-center justify-between border border-gray-500 rounded-md py-1 px-2 text-md font-semibold hover:border-gray-900"
+        aria-label="listbox-button"
+      >
         <span className={`grow md:text-left`}>{buttonLabel}</span>
         <ChevronUpDown size="md" />
       </Listbox.Button>
 
       {hasSelected && (
-        <span className="absolute top-0 left-0 inline-flex items-center justify-center px-2 py-1 rounded-full bg-cyan-500 text-xs text-gray-100 font-bold transform -translate-x-1/2 -translate-y-1/2">
+        <span
+          className="absolute top-0 left-0 inline-flex items-center justify-center px-2 py-1 rounded-full bg-cyan-500 text-xs text-gray-100 font-bold transform -translate-x-1/2 -translate-y-1/2"
+          aria-label="selected-quantity"
+          role="badge"
+        >
           {value.length}
         </span>
       )}
