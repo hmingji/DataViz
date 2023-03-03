@@ -117,7 +117,10 @@ export default function NewDonorChartSection() {
   }
 
   return (
-    <section className="container justify-center flex z-20">
+    <section
+      className="container justify-center flex z-20"
+      id="newdonor-chart"
+    >
       <div className="w-full max-w-[90vw] xl:max-w-5xl relative">
         <header className="pb-4">
           <h1 className={`text-2xl font-bold ${inter.className}`}>
