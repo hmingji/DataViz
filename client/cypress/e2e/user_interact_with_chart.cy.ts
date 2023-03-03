@@ -61,11 +61,11 @@ describe('chart', () => {
 
     cy.findByRole('listbox').contains(/Johor/i).click();
 
+    cy.wait('@getDonationData').its('response.statusCode').should('equal', 200);
+
     cy.get('section#donation-chart')
       .findByRole('badge', { name: /selected-quantity/i })
       .should('have.text', '2');
-
-    cy.wait('@getDonationData').its('response.statusCode').should('equal', 200);
 
     cy.get('section#donation-chart')
       .getReact('ForwardedLineChart')
@@ -80,6 +80,7 @@ describe('chart', () => {
       .then((response) => {
         expectedData = response.body.data;
       })
+      .wait(3000) // buffer for chart component to update the prop
       .get('section#donation-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
@@ -104,6 +105,7 @@ describe('chart', () => {
       .then((response) => {
         expectedData = response.body.data;
       })
+      .wait(3000) // buffer for chart component to update the prop
       .get('section#donation-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
@@ -132,6 +134,7 @@ describe('chart', () => {
       .then((response) => {
         expectedData = response.body.data;
       })
+      .wait(3000) // buffer for chart component to update the prop
       .get('section#donation-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
@@ -186,6 +189,7 @@ describe('chart', () => {
       .then((response) => {
         expectedData = response.body.data;
       })
+      .wait(3000) // buffer for chart component to update the prop
       .get('section#newdonor-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
@@ -210,6 +214,7 @@ describe('chart', () => {
       .then((response) => {
         expectedData = response.body.data;
       })
+      .wait(3000) // buffer for chart component to update the prop
       .get('section#newdonor-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
@@ -221,24 +226,25 @@ describe('chart', () => {
           });
       });
 
-    cy.get('section#donation-chart')
+    cy.get('section#newdonor-chart')
       .findByRole('button', { name: /dropdown-button/i })
       .click();
 
-    cy.get('section#donation-chart')
+    cy.get('section#newdonor-chart')
       .findByRole('menu')
       .contains('Age Group 17-24')
       .click();
 
     cy.wait('@getNewDonorData').its('response.statusCode').should('equal', 200);
-
+    //cy.wait(3000);
     cy.request(
       `https://blood-donation-api.onrender.com/api/v1/Record/newdonor/monthly/${attributeToSelect.newDonorSection}?State=${stateToSelect}`
     )
       .then((response) => {
         expectedData = response.body.data;
       })
-      .get('section#donation-chart')
+      .wait(3000)
+      .get('section#newdonor-chart')
       .getReact('ForwardedLineChart')
       .getProps('chartData')
       .should((prop: ChartData<'line'>) => {
