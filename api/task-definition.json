@@ -1,0 +1,57 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/Deploy-Data-Visual-API:1",
+    "containerDefinitions": [
+        {
+            "name": "DataVisualAPI",
+            "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "datavisualapi-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 0,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": []
+        }
+    ],
+    "family": "Deploy-Data-Visual-API",
+    "executionRoleArn": "arn:aws:iam::193681239916:role/ecsTaskExecutionRole",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2"
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-04-24T10:50:17.593Z",
+    "registeredBy": "arn:aws:iam::193681239916:root",
+    "tags": []
+}
