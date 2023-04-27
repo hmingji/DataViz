@@ -28,7 +28,7 @@ name: Deploy API to Amazon ECS
 
 on:
   push:
-    branches: ['main']
+    branches: ['react']
     path:
       - api/**
 
