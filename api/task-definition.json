@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:9",
+  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:11",
   "containerDefinitions": [
     {
       "name": "api",
-      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api:7a300a8c100273428e0b27531484417894cab3b9",
+      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api:8ddc70c1aa7c6c91c45ad39265ef443648420576",
       "cpu": 0,
       "portMappings": [
         {
@@ -78,7 +78,7 @@
   ],
   "family": "DataVisual",
   "executionRoleArn": "arn:aws:iam::193681239916:role/ecsTaskExecutionRole",
-  "revision": 9,
+  "revision": 11,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -108,12 +108,12 @@
   "compatibilities": ["EC2"],
   "requiresCompatibilities": ["EC2"],
   "cpu": "1024",
-  "memory": "1024",
+  "memory": "256",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2023-04-27T15:22:45.716Z",
+  "registeredAt": "2023-04-27T16:01:18.366Z",
   "registeredBy": "arn:aws:iam::193681239916:root",
   "tags": []
 }
