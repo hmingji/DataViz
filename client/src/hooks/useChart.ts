@@ -1,13 +1,13 @@
 import {
-    Attribute,
-    defaultAttribute,
-    RecordCategory,
-  } from '../constants/attributes';
+  Attribute,
+  defaultAttribute,
+  RecordCategory,
+} from '../constants/attributes';
 import { Interval, defaultInterval } from '../constants/intervals';
 import { defaultState, State, states } from '../constants/states';
 import { useEffect, useState } from 'react';
 import { useRecordQuery } from './useRecordQuery';
-  
+
 export const useChart = (category: RecordCategory) => {
   const defaultAttr = defaultAttribute[category];
   if (

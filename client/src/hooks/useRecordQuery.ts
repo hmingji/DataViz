@@ -1,7 +1,7 @@
 import { requests } from '../api/agent';
 import { State } from '../constants/states';
 import { RecordResponse } from '../models/RecordResponse';
-import { useQueries, useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 
 const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
 

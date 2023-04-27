@@ -8,7 +8,7 @@ function App() {
         <DashboardScreen />
       </HeaderLayout>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
