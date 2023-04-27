@@ -1,11 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    './components/**/*.{js,ts,jsx,tsx}',
-    './pages/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      'primary': ['"Playfair Display"'],
+      'secondary': ['Inter'],
+    }
   },
   plugins: [],
-};
+}
+

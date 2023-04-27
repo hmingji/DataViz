@@ -39,7 +39,7 @@ namespace api
             });
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             DapperPlusManager.AddValueConverter<DateOnly>(new DateOnlyTypeHandlerPlus());
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,32 +59,32 @@ namespace api
                 {
                     logger.LogInformation("Header: {Key}: {Value}", header.Key, header.Value);
                 }
-            
+
                 logger.LogInformation("Request Method: {Method}", context.Request.Method);
                 logger.LogInformation("Request Scheme: {Scheme}", context.Request.Scheme);
                 logger.LogInformation("Request Path: {Path}", context.Request.Path);
-            
+
                 await next();
             });
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
-            app.UseCors(opt => 
+            app.UseCors(opt =>
             {
                 string clientUrl = env.IsDevelopment() ? Configuration.GetValue<string>("ClientUrl") : Environment.GetEnvironmentVariable("CLIENT_URL");
                 opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl);
             });
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
             var provider = app.ApplicationServices;
-            provider.UseScheduler(schedular => 
+            provider.UseScheduler(schedular =>
             {
                 schedular.Schedule<RetrieveDataFromGithub>()
-                    .DailyAt(8 + 8, 0);
-                    //.RunOnceAtStart(); //for development purpose
+                    .DailyAt(8 + 8, 0)
+                    .RunOnceAtStart(); //for development purpose
             });
         }
     }
