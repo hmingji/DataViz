@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:1",
+  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:3",
   "containerDefinitions": [
     {
       "name": "api",
-      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api",
+      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api:ee95209ce6b8fa10e9bc616535fda2b4ca79a289",
       "cpu": 0,
       "portMappings": [
         {
@@ -16,7 +16,6 @@
       ],
       "essential": true,
       "environment": [],
-      "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
       "secrets": [
@@ -55,9 +54,12 @@
         {
           "name": "DB_PW",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+        },
+        {
+          "name": "CLIENT_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
         }
       ],
-      "ulimits": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -71,7 +73,7 @@
   ],
   "family": "DataVisual",
   "executionRoleArn": "arn:aws:iam::193681239916:role/ecsTaskExecutionRole",
-  "revision": 1,
+  "revision": 3,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -94,9 +96,6 @@
       "name": "ecs.capability.execution-role-ecr-pull"
     },
     {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
     }
   ],
@@ -109,7 +108,7 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2023-04-27T12:22:47.747Z",
+  "registeredAt": "2023-04-27T12:55:41.001Z",
   "registeredBy": "arn:aws:iam::193681239916:root",
   "tags": []
 }

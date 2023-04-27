@@ -35,7 +35,7 @@ on:
 env:
   AWS_REGION: ap-southeast-1 # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: data-visual-api # set this to your Amazon ECR repository name
-  ECS_SERVICE: ReactAppService # set this to your Amazon ECS service name
+  ECS_SERVICE: DataVisualService # set this to your Amazon ECS service name
   ECS_CLUSTER: ReactAppCluster # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION:
     api/task-definition.json # set this to the path to your Amazon ECS task definition
