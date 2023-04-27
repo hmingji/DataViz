@@ -85,15 +85,19 @@ namespace api.Repositories
             }
             else
             {
-                var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                // var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-                connUrl = connUrl.Replace("postgres://", string.Empty);
-                var pgUserPass = connUrl.Split("@")[0];
-                var pgHostDb = connUrl.Split("@")[1];
-                var pgHost = pgHostDb.Split("/")[0];
-                var pgDb = pgHostDb.Split("/")[1];
-                var pgUser = pgUserPass.Split(":")[0];
-                var pgPass = pgUserPass.Split(":")[1];
+                // connUrl = connUrl.Replace("postgres://", string.Empty);
+                // var pgUserPass = connUrl.Split("@")[0];
+                // var pgHostDb = connUrl.Split("@")[1];
+                // var pgHost = pgHostDb.Split("/")[0];
+                // var pgDb = pgHostDb.Split("/")[1];
+                // var pgUser = pgUserPass.Split(":")[0];
+                // var pgPass = pgUserPass.Split(":")[1];
+                var pgHost = Environment.GetEnvironmentVariable("DB_HOST");
+                var pgDb = Environment.GetEnvironmentVariable("DB_NAME");
+                var pgUser = Environment.GetEnvironmentVariable("DB_USER");
+                var pgPass = Environment.GetEnvironmentVariable("DB_PW");
                 var pgPort = 5432;
 
                 connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
