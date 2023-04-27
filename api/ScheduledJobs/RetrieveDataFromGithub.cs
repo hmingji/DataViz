@@ -29,6 +29,7 @@ namespace api.ScheduledJobs
 
         public async Task Invoke()
         {
+            _logger.LogInformation("Task is invoked");
             string header = _configuration.GetValue<string>("GithubDataSource:Header") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
             string token = _configuration.GetValue<string>("GithubDataSource:Token") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");;
             string repoOwner = _configuration.GetValue<string>("GithubDataSource:RepoOwner") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");;
@@ -37,6 +38,7 @@ namespace api.ScheduledJobs
             var githubClient = new GitHubClient(new ProductHeaderValue(header));
             var tokenAuth = new Credentials(token);
             githubClient.Credentials = tokenAuth;   
+            _logger.LogInformation("Task is trying to get content from github");
             var results = await githubClient.Repository.Content.GetAllContents(repoOwner, repoName);
             
             using var connection = new NpgsqlConnection(getConnectionString());
