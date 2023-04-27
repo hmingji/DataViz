@@ -11,34 +11,10 @@ import { states } from '../../../constants/states';
 import { useChart } from '../../../hooks/useChart';
 import { generateChartDataset } from '../../../utils/generateChartDataset';
 import getChartMinDate from '../../../utils/getChartMinDate';
-import { ChartData, ChartDataset, ChartOptions } from 'chart.js';
-//import dynamic from 'next/dynamic';
-import { forwardRef, useRef } from 'react';
-import { ChartJSOrUndefined } from 'react-chartjs-2/dist/types';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import { useRef } from 'react';
+import { ChartJSOrUndefined } from '../../../../node_modules/react-chartjs-2/dist/types';
 import LineChart from '../../common/LineChart';
-
-// const LineChart = dynamic(() => import('@/components/common/LineChart'), {
-//   ssr: false,
-// });
-// import { Inter } from '@next/font/google';
-
-// const inter = Inter({
-//   subsets: ['latin'],
-// });
-
-// const ForwardedLineChart = forwardRef<
-//   ChartJSOrUndefined<'line'>,
-//   {
-//     chartData: ChartData<'line'>;
-//     options: ChartOptions<'line'>;
-//   }
-// >((props, ref) => (
-//   <LineChart
-//     forwardRef={ref}
-//     {...props}
-//   />
-// ));
-// ForwardedLineChart.displayName = 'ForwardedLineChart';
 
 export default function NewDonorChartSection() {
   const {
@@ -165,15 +141,8 @@ export default function NewDonorChartSection() {
           />
         </div>
         <div className="w-full h-full relative aspect-[2] py-5 flex flex-col">
-          {/* <ForwardedLineChart
-            ref={chartRef}
-            options={options}
-            chartData={{
-              datasets: datasets.current,
-            }}
-          /> */}
           <LineChart
-            forwardRef={chartRef} 
+            forwardRef={chartRef}
             options={options}
             chartData={{
               datasets: datasets.current,

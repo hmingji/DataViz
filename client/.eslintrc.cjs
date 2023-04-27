@@ -3,13 +3,21 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:prettier/recommended',
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  plugins: ['@typescript-eslint', 'prettier', 'react'],
   rules: {
-    'react-refresh/only-export-components': 'warn',
+    'prettier/prettier': 'error',
   },
   overrides: [
     {
@@ -19,4 +27,4 @@ module.exports = {
       },
     },
   ],
-}
+};
