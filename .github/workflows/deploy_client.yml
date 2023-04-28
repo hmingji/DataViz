@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - react
-    path:
-      - client/**
+    paths:
+      - 'client/**'
 
 jobs:
   deploy:
@@ -38,9 +38,8 @@ jobs:
 
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.1
-        working-directory: ./client/
         with:
-          args: -c "serverless plugin install --name serverless-s3-sync && serverless deploy"
+          args: -c "cd client && serverless plugin install --name serverless-s3-sync && serverless deploy"
           entrypoint: /bin/sh
         env:
           # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
