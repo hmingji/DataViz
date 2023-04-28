@@ -30,11 +30,13 @@ namespace api.ScheduledJobs
         public async Task Invoke()
         {
             _logger.LogInformation("Task is invoked");
-            string header = _configuration.GetValue<string>("GithubDataSource:Header") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
-            string token = _configuration.GetValue<string>("GithubDataSource:Token") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");;
-            string repoOwner = _configuration.GetValue<string>("GithubDataSource:RepoOwner") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");;
-            string repoName = _configuration.GetValue<string>("GithubDataSource:RepoName") ?? Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPONAME");;
-            
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            _logger.LogInformation("Task: environment is ", env);
+            string header = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:Header") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
+            string token = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:Token") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");;
+            string repoOwner = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:RepoOwner") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");;
+            string repoName = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:RepoName") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPONAME");;
+            _logger.LogInformation("Task: Retrived Environment Variables: ", header, token, repoOwner, repoName);
             var githubClient = new GitHubClient(new ProductHeaderValue(header));
             var tokenAuth = new Credentials(token);
             githubClient.Credentials = tokenAuth;   

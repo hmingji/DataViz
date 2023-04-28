@@ -99,7 +99,7 @@ namespace api.Repositories
                 var pgUser = Environment.GetEnvironmentVariable("DB_USER");
                 var pgPass = Environment.GetEnvironmentVariable("DB_PW");
                 var pgPort = 5432;
-
+                
                 connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
             }
             return connStr;
