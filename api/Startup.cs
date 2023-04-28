@@ -63,7 +63,8 @@ namespace api
                 logger.LogInformation("Request Method: {Method}", context.Request.Method);
                 logger.LogInformation("Request Scheme: {Scheme}", context.Request.Scheme);
                 logger.LogInformation("Request Path: {Path}", context.Request.Path);
-
+                string clientUrl = env.IsDevelopment() ? Configuration.GetValue<string>("ClientUrl") : Environment.GetEnvironmentVariable("CLIENT_URL");
+                logger.LogInformation($"CORS allow origin {clientUrl}");
                 await next();
             });
             app.UseMiddleware<ExceptionMiddleware>();
