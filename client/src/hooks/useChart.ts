@@ -4,7 +4,7 @@ import {
   RecordCategory,
 } from '../constants/attributes';
 import { Interval, defaultInterval } from '../constants/intervals';
-import { defaultState, State, states } from '../constants/states';
+import { defaultState, State } from '../constants/states';
 import { useEffect, useState } from 'react';
 import { useRecordQuery } from './useRecordQuery';
 
