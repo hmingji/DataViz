@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:11",
+  "taskDefinitionArn": "arn:aws:ecs:ap-southeast-1:193681239916:task-definition/DataVisual:18",
   "containerDefinitions": [
     {
       "name": "api",
-      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api:8ddc70c1aa7c6c91c45ad39265ef443648420576",
+      "image": "193681239916.dkr.ecr.ap-southeast-1.amazonaws.com/data-visual-api:000589c30571255e31dd13a251facae3253e8578",
       "cpu": 0,
       "portMappings": [
         {
@@ -26,43 +26,43 @@
       "secrets": [
         {
           "name": "ASPNETCORE_ENVIRONMENT",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "Production"
         },
         {
           "name": "GITHUBDATASOURCE_HEADER",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/GITHUBDATASOURCE_HEADER"
         },
         {
           "name": "GITHUBDATASOURCE_TOKEN",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/GITHUBDATASOURCE_TOKEN"
         },
         {
           "name": "GITHUBDATASOURCE_REPOOWNER",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/GITHUBDATASOURCE_REPOOWNER"
         },
         {
           "name": "GITHUBDATASOURCE_REPONAME",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/GITHUBDATASOURCE_REPONAME"
         },
         {
           "name": "DB_HOST",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/DB_HOST"
         },
         {
           "name": "DB_NAME",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/DB_NAME"
         },
         {
           "name": "DB_USER",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/DB_USER"
         },
         {
           "name": "DB_PW",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/DB_PW"
         },
         {
           "name": "CLIENT_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:193681239916:secret:DataVisualSecret-UC8BCj"
+          "valueFrom": "arn:aws:ssm:ap-southeast-1:193681239916:parameter/CLIENT_URL"
         }
       ],
       "logConfiguration": {
@@ -78,7 +78,7 @@
   ],
   "family": "DataVisual",
   "executionRoleArn": "arn:aws:iam::193681239916:role/ecsTaskExecutionRole",
-  "revision": 11,
+  "revision": 18,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -95,10 +95,10 @@
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
     },
     {
-      "name": "ecs.capability.secrets.asm.environment-variables"
+      "name": "ecs.capability.execution-role-ecr-pull"
     },
     {
-      "name": "ecs.capability.execution-role-ecr-pull"
+      "name": "ecs.capability.secrets.ssm.environment-variables"
     },
     {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
@@ -113,7 +113,7 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2023-04-27T16:01:18.366Z",
+  "registeredAt": "2023-04-28T04:16:40.616Z",
   "registeredBy": "arn:aws:iam::193681239916:root",
   "tags": []
 }
