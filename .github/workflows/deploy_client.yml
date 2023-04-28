@@ -3,7 +3,7 @@ name: Deploy client to S3
 on:
   push:
     branches:
-      - main
+      - react
     path:
       - client/**
 
