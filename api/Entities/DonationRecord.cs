@@ -9,7 +9,7 @@ namespace api.Entities
     {
         public int Id { get; set; }
         public DateOnly Date { get; set; }
-        public string State { get; set; } 
+        public string State { get; set; }
         public int Daily { get; set; }
         public int Blood_A { get; set; }
         public int Blood_B { get; set; }

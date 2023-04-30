@@ -9,7 +9,7 @@ using Z.Dapper.Plus;
 
 namespace api.Utils
 {
-    public class DataFetcher<T, TMap> 
+    public class DataFetcher<T, TMap>
         where TMap : CsvHelper.Configuration.ClassMap
         where T : class
     {
@@ -25,6 +25,7 @@ namespace api.Utils
         {
             _records = records;
         }
+
         public async Task GetCsvData()
         {
             try
@@ -32,16 +33,17 @@ namespace api.Utils
                 using (var client = new HttpClient())
                 using (var stream = await client.GetStreamAsync(_downloadUrl))
                 using (var reader = new StreamReader(stream))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) 
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     csv.Context.RegisterClassMap<TMap>();
                     var records = csv.GetRecords<T>().ToList();
                     this.SetRecords(records);
-                } 
-            } catch (Exception ex)
+                }
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
-            }  
+            }
         }
 
         public async Task BulkInsertCsvData(NpgsqlConnection connection, string tableName)
@@ -50,7 +52,8 @@ namespace api.Utils
             {
                 DapperPlusManager.Entity<T>().Table(tableName);
                 await connection.BulkActionAsync(x => x.BulkInsert(_records));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }

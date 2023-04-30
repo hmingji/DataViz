@@ -17,11 +17,14 @@ using api.Utils;
 namespace api.ScheduledJobs
 {
     public class RetrieveDataFromGithub : IInvocable
-    {  
+    {
         private ILogger<RetrieveDataFromGithub> _logger;
         private IConfiguration _configuration;
 
-        public RetrieveDataFromGithub(IConfiguration configuration, ILogger<RetrieveDataFromGithub> logger)
+        public RetrieveDataFromGithub(
+            IConfiguration configuration,
+            ILogger<RetrieveDataFromGithub> logger
+        )
         {
             _configuration = configuration;
             _logger = logger;
@@ -32,17 +35,34 @@ namespace api.ScheduledJobs
             _logger.LogInformation("Task is invoked");
             string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             _logger.LogInformation($"Task: environment is {env}");
-            string header = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:Header") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
-            string token = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:Token") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");;
-            string repoOwner = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:RepoOwner") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");;
-            string repoName = (env == "Development") ? _configuration.GetValue<string>("GithubDataSource:RepoName") : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPONAME");;
-            _logger.LogInformation($"Task: Retrived Environment Variables: {header}, {token}, {repoOwner}, {repoName}");
+            string header =
+                (env == "Development")
+                    ? _configuration.GetValue<string>("GithubDataSource:Header")
+                    : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_HEADER");
+            string token =
+                (env == "Development")
+                    ? _configuration.GetValue<string>("GithubDataSource:Token")
+                    : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_TOKEN");
+            ;
+            string repoOwner =
+                (env == "Development")
+                    ? _configuration.GetValue<string>("GithubDataSource:RepoOwner")
+                    : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPOOWNER");
+            ;
+            string repoName =
+                (env == "Development")
+                    ? _configuration.GetValue<string>("GithubDataSource:RepoName")
+                    : Environment.GetEnvironmentVariable("GITHUBDATASOURCE_REPONAME");
+            ;
+            _logger.LogInformation(
+                $"Task: Retrived Environment Variables: {header}, {token}, {repoOwner}, {repoName}"
+            );
             var githubClient = new GitHubClient(new ProductHeaderValue(header));
             var tokenAuth = new Credentials(token);
-            githubClient.Credentials = tokenAuth;   
+            githubClient.Credentials = tokenAuth;
             _logger.LogInformation("Task is trying to get content from github");
             var results = await githubClient.Repository.Content.GetAllContents(repoOwner, repoName);
-            
+
             using var connection = new NpgsqlConnection(getConnectionString());
             connection.Open();
             try
@@ -50,26 +70,35 @@ namespace api.ScheduledJobs
                 await InitializeTable(connection);
                 _logger.LogInformation("Completed initializing tables");
                 _logger.LogInformation(Environment.GetEnvironmentVariable("CLIENT_URL"));
-                
-                string donationRecordDownloadUrl = results.FirstOrDefault(item => item.Name == "donations_state.csv").DownloadUrl;
-                var donationRecordFetcher = new DataFetcher<DonationRecord, DonationRecordMap>(donationRecordDownloadUrl);
+
+                string donationRecordDownloadUrl = results
+                    .FirstOrDefault(item => item.Name == "donations_state.csv")
+                    .DownloadUrl;
+                var donationRecordFetcher = new DataFetcher<DonationRecord, DonationRecordMap>(
+                    donationRecordDownloadUrl
+                );
                 await donationRecordFetcher.GetCsvData();
                 await donationRecordFetcher.BulkInsertCsvData(connection, "donationrecord");
                 _logger.LogInformation("Completed storing donation record");
 
-                string newDonorRecordDownloadUrl = results.FirstOrDefault(item => item.Name == "newdonors_state.csv").DownloadUrl;
-                var newDonorRecordFetcher = new DataFetcher<NewDonorRecord, NewDonorRecordMap>(newDonorRecordDownloadUrl);
+                string newDonorRecordDownloadUrl = results
+                    .FirstOrDefault(item => item.Name == "newdonors_state.csv")
+                    .DownloadUrl;
+                var newDonorRecordFetcher = new DataFetcher<NewDonorRecord, NewDonorRecordMap>(
+                    newDonorRecordDownloadUrl
+                );
                 await newDonorRecordFetcher.GetCsvData();
                 await newDonorRecordFetcher.BulkInsertCsvData(connection, "newdonorrecord");
                 _logger.LogInformation("Completed storing new donor record");
-            } 
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"error: {ex.ToString()}");
             }
         }
 
-        private string getConnectionString() {
+        private string getConnectionString()
+        {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             string connStr;
@@ -95,19 +124,17 @@ namespace api.ScheduledJobs
                 var pgPass = Environment.GetEnvironmentVariable("DB_PW");
                 var pgPort = 5432;
 
-                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+                connStr =
+                    $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
             }
             return connStr;
         }
-        
+
         private async Task InitializeTable(NpgsqlConnection connection)
         {
             try
             {
-                using var command = new NpgsqlCommand
-                {
-                    Connection = connection
-                };
+                using var command = new NpgsqlCommand { Connection = connection };
 
                 command.CommandText = "DROP TABLE IF EXISTS DonationRecord";
                 await command.ExecuteNonQueryAsync();
@@ -115,7 +142,8 @@ namespace api.ScheduledJobs
                 command.CommandText = "DROP TABLE IF EXISTS NewDonorRecord";
                 await command.ExecuteNonQueryAsync();
 
-                command.CommandText = @"CREATE TABLE IF NOT EXISTS DonationRecord
+                command.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS DonationRecord
                                         (Id SERIAL PRIMARY KEY,
                                         Date DATE,
                                         State TEXT,
@@ -138,7 +166,8 @@ namespace api.ScheduledJobs
                                         Donor_Irregular INTEGER)";
                 await command.ExecuteNonQueryAsync();
 
-                command.CommandText = @"CREATE TABLE IF NOT EXISTS NewDonorRecord
+                command.CommandText =
+                    @"CREATE TABLE IF NOT EXISTS NewDonorRecord
                                         (Id SERIAL PRIMARY KEY,
                                         Date DATE,
                                         State TEXT,
@@ -154,7 +183,8 @@ namespace api.ScheduledJobs
                                         AgeGroupOther INTEGER,
                                         Total INTEGER)";
                 await command.ExecuteNonQueryAsync();
-            } catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 _logger.LogError($"Initializing table error: {ex.ToString()}");
             }

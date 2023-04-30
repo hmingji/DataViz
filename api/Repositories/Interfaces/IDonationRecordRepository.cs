@@ -14,5 +14,6 @@ namespace api.Repositories.Interfaces
         Task<List<TimeSeriesData>> GetDailyRecords(string state, string attribute);
         Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute);
         Task<List<TimeSeriesData>> GetYearlyRecords(string state, string attribute);
+        Task<RecentRatioData> GetRecentRatio(string interval);
     }
 }

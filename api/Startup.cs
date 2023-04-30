@@ -26,7 +26,10 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Boolean isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? true : false;
+            Boolean isDevelopment =
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development"
+                    ? true
+                    : false;
             services.AddScoped<IDonationRecordRepository, DonationRecordRepository>();
             services.AddScoped<INewDonorRecordRepository, NewDonorRecordRepository>();
             services.AddTransient<RetrieveDataFromGithub>();
@@ -39,11 +42,14 @@ namespace api
             });
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             DapperPlusManager.AddValueConverter<DateOnly>(new DateOnlyTypeHandlerPlus());
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ILogger<Startup> logger
+        )
         {
             if (env.IsDevelopment())
             {
@@ -52,26 +58,32 @@ namespace api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api v1"));
             }
 
-            app.Use(async (context, next) =>
-            {
-                // Log/Print all Headers
-                foreach (var header in context.Request.Headers)
+            app.Use(
+                async (context, next) =>
                 {
-                    logger.LogInformation("Header: {Key}: {Value}", header.Key, header.Value);
-                }
+                    // Log/Print all Headers
+                    foreach (var header in context.Request.Headers)
+                    {
+                        logger.LogInformation("Header: {Key}: {Value}", header.Key, header.Value);
+                    }
 
-                logger.LogInformation("Request Method: {Method}", context.Request.Method);
-                logger.LogInformation("Request Scheme: {Scheme}", context.Request.Scheme);
-                logger.LogInformation("Request Path: {Path}", context.Request.Path);
-                string clientUrl = env.IsDevelopment() ? Configuration.GetValue<string>("ClientUrl") : Environment.GetEnvironmentVariable("CLIENT_URL");
-                logger.LogInformation($"CORS allow origin {clientUrl}");
-                await next();
-            });
+                    logger.LogInformation("Request Method: {Method}", context.Request.Method);
+                    logger.LogInformation("Request Scheme: {Scheme}", context.Request.Scheme);
+                    logger.LogInformation("Request Path: {Path}", context.Request.Path);
+                    string clientUrl = env.IsDevelopment()
+                        ? Configuration.GetValue<string>("ClientUrl")
+                        : Environment.GetEnvironmentVariable("CLIENT_URL");
+                    logger.LogInformation($"CORS allow origin {clientUrl}");
+                    await next();
+                }
+            );
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
             app.UseCors(opt =>
             {
-                string clientUrl = env.IsDevelopment() ? Configuration.GetValue<string>("ClientUrl") : Environment.GetEnvironmentVariable("CLIENT_URL");
+                string clientUrl = env.IsDevelopment()
+                    ? Configuration.GetValue<string>("ClientUrl")
+                    : Environment.GetEnvironmentVariable("CLIENT_URL");
                 opt.AllowAnyHeader().AllowAnyMethod().WithOrigins(clientUrl);
             });
 
@@ -83,9 +95,8 @@ namespace api
             var provider = app.ApplicationServices;
             provider.UseScheduler(schedular =>
             {
-                schedular.Schedule<RetrieveDataFromGithub>()
-                    .DailyAt(8 + 8, 0)
-                    .RunOnceAtStart(); //for development purpose
+                schedular.Schedule<RetrieveDataFromGithub>().DailyAt(8 + 8, 0);
+                //.RunOnceAtStart(); //for development purpose
             });
         }
     }

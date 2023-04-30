@@ -16,15 +16,30 @@ namespace api.Repositories
 
         public NewDonorRecordRepository(IConfiguration configuration)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<List<NewDonorRecord>> GetRecords(string state, DateOnly startDate, DateOnly endDate)
+        public async Task<List<NewDonorRecord>> GetRecords(
+            string state,
+            DateOnly startDate,
+            DateOnly endDate
+        )
         {
             using var connection = new NpgsqlConnection(getConnectionString());
-        
-            List<NewDonorRecord> records = (await connection.QueryAsync<NewDonorRecord>("SELECT * FROM NewDonorRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate", new { state = state, startDate = startDate, endDate = endDate })).ToList();
-        
+
+            List<NewDonorRecord> records = (
+                await connection.QueryAsync<NewDonorRecord>(
+                    "SELECT * FROM NewDonorRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate",
+                    new
+                    {
+                        state = state,
+                        startDate = startDate,
+                        endDate = endDate
+                    }
+                )
+            ).ToList();
+
             return records;
         }
 
@@ -32,12 +47,29 @@ namespace api.Repositories
         {
             using var connection = new NpgsqlConnection(getConnectionString());
 
-            var affected = await connection.ExecuteAsync("INSERT INTO NewDonorRecord (Date, State, AgeGroup17_24, AgeGroup25_29, AgeGroup30_34, AgeGroup35_39, AgeGroup40_44, AgeGroup45_49, AgeGroup50_54, AgeGroup55_59, AgeGroup60_64, AgeGroupOther, Total) VALUES (@date, @state, @ageGroup17_24, @ageGroup25_29, @ageGroup30_34, @ageGroup35_39, @ageGroup40_44, @ageGroup45_49, @ageGroup50_54, @ageGroup55_59, @ageGroup60_64, @ageGroupOther, @total)", 
-                new { date=record.Date, state=record.State, ageGroup17_24=record.AgeGroup17_24, ageGroup25_29=record.AgeGroup25_29, ageGroup30_34=record.AgeGroup30_34, ageGroup35_39=record.AgeGroup35_39, ageGroup40_44=record.AgeGroup40_44, ageGroup45_49=record.AgeGroup45_49, ageGroup50_54=record.AgeGroup50_54, ageGroup55_59=record.AgeGroup55_59, ageGroup60_64=record.AgeGroup60_64, ageGroupOther=record.AgeGroupOther, total=record.Total });
-        
+            var affected = await connection.ExecuteAsync(
+                "INSERT INTO NewDonorRecord (Date, State, AgeGroup17_24, AgeGroup25_29, AgeGroup30_34, AgeGroup35_39, AgeGroup40_44, AgeGroup45_49, AgeGroup50_54, AgeGroup55_59, AgeGroup60_64, AgeGroupOther, Total) VALUES (@date, @state, @ageGroup17_24, @ageGroup25_29, @ageGroup30_34, @ageGroup35_39, @ageGroup40_44, @ageGroup45_49, @ageGroup50_54, @ageGroup55_59, @ageGroup60_64, @ageGroupOther, @total)",
+                new
+                {
+                    date = record.Date,
+                    state = record.State,
+                    ageGroup17_24 = record.AgeGroup17_24,
+                    ageGroup25_29 = record.AgeGroup25_29,
+                    ageGroup30_34 = record.AgeGroup30_34,
+                    ageGroup35_39 = record.AgeGroup35_39,
+                    ageGroup40_44 = record.AgeGroup40_44,
+                    ageGroup45_49 = record.AgeGroup45_49,
+                    ageGroup50_54 = record.AgeGroup50_54,
+                    ageGroup55_59 = record.AgeGroup55_59,
+                    ageGroup60_64 = record.AgeGroup60_64,
+                    ageGroupOther = record.AgeGroupOther,
+                    total = record.Total
+                }
+            );
+
             if (affected == 0)
                 return false;
-            
+
             return true;
         }
 
@@ -47,10 +79,12 @@ namespace api.Repositories
 
             string query = getDailyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
-            
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
+
             return data;
-        } 
+        }
 
         public async Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute)
         {
@@ -58,8 +92,10 @@ namespace api.Repositories
 
             string query = getMonthlyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
-            
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
+
             return data;
         }
 
@@ -69,12 +105,15 @@ namespace api.Repositories
 
             string query = getYearlyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
 
             return data;
         }
 
-        private string getConnectionString() {
+        private string getConnectionString()
+        {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             string connStr;
@@ -100,13 +139,14 @@ namespace api.Repositories
                 var pgPass = Environment.GetEnvironmentVariable("DB_PW");
                 var pgPort = 5432;
 
-                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+                connStr =
+                    $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
             }
             return connStr;
         }
 
         private string getDailyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "agegroup17_24":
@@ -137,7 +177,7 @@ namespace api.Repositories
         }
 
         private string getMonthlyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "agegroup17_24":
@@ -168,7 +208,7 @@ namespace api.Repositories
         }
 
         private string getYearlyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "agegroup17_24":

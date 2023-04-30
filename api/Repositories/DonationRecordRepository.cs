@@ -16,28 +16,66 @@ namespace api.Repositories
 
         public DonationRecordRepository(IConfiguration configuration)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _configuration =
+                configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task<List<DonationRecord>> GetRecords(string state, DateOnly startDate, DateOnly endDate)
+        public async Task<List<DonationRecord>> GetRecords(
+            string state,
+            DateOnly startDate,
+            DateOnly endDate
+        )
         {
             using var connection = new NpgsqlConnection(getConnectionString());
-        
-            List<DonationRecord> records = (await connection.QueryAsync<DonationRecord>("SELECT * FROM DonationRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate", new { state = state, startDate = startDate, endDate = endDate })).ToList();
-        
+
+            List<DonationRecord> records = (
+                await connection.QueryAsync<DonationRecord>(
+                    "SELECT * FROM DonationRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate",
+                    new
+                    {
+                        state = state,
+                        startDate = startDate,
+                        endDate = endDate
+                    }
+                )
+            ).ToList();
+
             return records;
         }
 
         public async Task<bool> CreateRecord(DonationRecord record)
         {
             using var connection = new NpgsqlConnection(getConnectionString());
-            
-            var affected = await connection.ExecuteAsync("INSERT INTO DonationRecord (Date, State, Daily, Blood_A, Blood_B, Blood_O, Blood_AB, Location_Centre, Location_Mobile, Type_WholeBlood, Type_ApheresisPlatelet, Type_ApheresisPlasma, Type_Other, Social_Civilian, Social_Student, Social_PoliceArmy, Donor_New, Donor_Regular, Donor_Irregular) VALUES (@date, @state, @daily, @blood_A, @blood_B, @blood_O, @blood_AB, @location_Centre, @location_Mobile, @type_WholeBlood, @type_ApheresisPlatelet, @type_ApheresisPlasma, @type_Other, @social_Civilian, @social_Student, @social_PoliceArmy, @donor_New, @donor_Regular, @donor_Irregular)", 
-                new { date=record.Date, state=record.State, daily=record.Daily, blood_A=record.Blood_A, blood_B=record.Blood_B, blood_O=record.Blood_O, blood_AB=record.Blood_AB, location_Centre=record.Location_Centre, location_Mobile=record.Location_Mobile, type_WholeBlood=record.Type_WholeBlood, type_ApheresisPlatelet=record.Type_ApheresisPlatelet, type_ApheresisPlasma=record.Type_ApheresisPlasma, type_Other=record.Type_Other, social_Civilian=record.Social_Civilian, social_Student=record.Social_Student, social_PoliceArmy=record.Social_PoliceArmy, donor_New=record.Donor_New, donor_Regular=record.Donor_Regular, donor_Irregular=record.Donor_Irregular });
-        
+
+            var affected = await connection.ExecuteAsync(
+                "INSERT INTO DonationRecord (Date, State, Daily, Blood_A, Blood_B, Blood_O, Blood_AB, Location_Centre, Location_Mobile, Type_WholeBlood, Type_ApheresisPlatelet, Type_ApheresisPlasma, Type_Other, Social_Civilian, Social_Student, Social_PoliceArmy, Donor_New, Donor_Regular, Donor_Irregular) VALUES (@date, @state, @daily, @blood_A, @blood_B, @blood_O, @blood_AB, @location_Centre, @location_Mobile, @type_WholeBlood, @type_ApheresisPlatelet, @type_ApheresisPlasma, @type_Other, @social_Civilian, @social_Student, @social_PoliceArmy, @donor_New, @donor_Regular, @donor_Irregular)",
+                new
+                {
+                    date = record.Date,
+                    state = record.State,
+                    daily = record.Daily,
+                    blood_A = record.Blood_A,
+                    blood_B = record.Blood_B,
+                    blood_O = record.Blood_O,
+                    blood_AB = record.Blood_AB,
+                    location_Centre = record.Location_Centre,
+                    location_Mobile = record.Location_Mobile,
+                    type_WholeBlood = record.Type_WholeBlood,
+                    type_ApheresisPlatelet = record.Type_ApheresisPlatelet,
+                    type_ApheresisPlasma = record.Type_ApheresisPlasma,
+                    type_Other = record.Type_Other,
+                    social_Civilian = record.Social_Civilian,
+                    social_Student = record.Social_Student,
+                    social_PoliceArmy = record.Social_PoliceArmy,
+                    donor_New = record.Donor_New,
+                    donor_Regular = record.Donor_Regular,
+                    donor_Irregular = record.Donor_Irregular
+                }
+            );
+
             if (affected == 0)
                 return false;
-            
+
             return true;
         }
 
@@ -47,10 +85,12 @@ namespace api.Repositories
 
             string query = getDailyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
-            
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
+
             return data;
-        } 
+        }
 
         public async Task<List<TimeSeriesData>> GetMonthlyRecords(string state, string attribute)
         {
@@ -58,8 +98,10 @@ namespace api.Repositories
 
             string query = getMonthlyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
-            
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
+
             return data;
         }
 
@@ -69,12 +111,52 @@ namespace api.Repositories
 
             string query = getYearlyDataQueryBasedOnAttribute(attribute);
 
-            List<TimeSeriesData> data = (await connection.QueryAsync<TimeSeriesData>(query, new { state = state })).ToList();
+            List<TimeSeriesData> data = (
+                await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
+            ).ToList();
 
             return data;
         }
 
-        private string getConnectionString() {
+        public async Task<RecentRatioData> GetRecentRatio(string interval)
+        {
+            using var connection = new NpgsqlConnection(getConnectionString());
+
+            var dbParam = new DbString()
+            {
+                Value = "month",
+                IsAnsi = true,
+                IsFixedLength = false
+            };
+
+            string query =
+                @$"
+                SELECT 	state, 
+                        ROUND(100.0 * sum(blood_a)/sum(daily), 1) AS blood_a,
+		                ROUND(100.0 * sum(blood_b)/sum(daily), 1) AS blood_b,
+                        ROUND(100.0 * sum(blood_o)/sum(daily), 1) AS blood_o,
+                        ROUND(100.0 * sum(blood_ab)/sum(daily), 1) AS blood_ab,
+                        ROUND(100.0 * sum(location_centre)/sum(daily), 1) AS location_centre,
+                        ROUND(100.0 * sum(location_mobile)/sum(daily), 1) AS location_mobile,
+                        ROUND(100.0 * sum(type_wholeblood)/sum(daily), 1) AS type_wholeblood,
+                        ROUND(100.0 * (sum(type_apheresisplatelet) + sum(type_apheresisplasma))/sum(daily), 1) AS type_apheresis,
+                        ROUND(100.0 * sum(social_civilian)/sum(daily), 1) AS social_civilian,
+                        ROUND(100.0 * sum(social_student)/sum(daily), 1) AS social_student,
+                        ROUND(100.0 * sum(social_policearmy)/sum(daily), 1) AS social_uniformedBodies,
+                        ROUND(100.0 * sum(donor_new)/sum(daily), 1) AS donor_new,
+                        ROUND(100.0 * sum(donor_regular)/sum(daily), 1) AS donor_regular,
+                        ROUND(100.0 * sum(donor_irregular)/sum(daily), 1) AS donor_lapsed
+                FROM donationrecord
+                WHERE date >= (CURRENT_DATE - INTERVAL '1 {interval}') AND state = 'Malaysia'
+                GROUP BY state";
+
+            var data = (await connection.QueryAsync<RecentRatioData>(query)).FirstOrDefault();
+
+            return data;
+        }
+
+        private string getConnectionString()
+        {
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             string connStr;
@@ -99,14 +181,15 @@ namespace api.Repositories
                 var pgUser = Environment.GetEnvironmentVariable("DB_USER");
                 var pgPass = Environment.GetEnvironmentVariable("DB_PW");
                 var pgPort = 5432;
-                
-                connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
+
+                connStr =
+                    $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;Trust Server Certificate=true";
             }
             return connStr;
         }
 
         private string getDailyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "daily":
@@ -149,7 +232,7 @@ namespace api.Repositories
         }
 
         private string getMonthlyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "daily":
@@ -192,7 +275,7 @@ namespace api.Repositories
         }
 
         private string getYearlyDataQueryBasedOnAttribute(string attribute)
-        {   
+        {
             switch (attribute.ToLower())
             {
                 case "daily":
