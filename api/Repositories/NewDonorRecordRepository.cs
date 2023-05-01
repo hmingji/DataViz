@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Entities;
 using api.Repositories.Interfaces;
+using api.Repositories.ValueObjects;
 using api.RequestHelpers;
 using Dapper;
 using Npgsql;
@@ -108,6 +109,35 @@ namespace api.Repositories
             List<TimeSeriesData> data = (
                 await connection.QueryAsync<TimeSeriesData>(query, new { state = state })
             ).ToList();
+
+            return data;
+        }
+
+        public async Task<RecentNewDonor> getRecentOverview(string interval = "month")
+        {
+            if (interval != "month" && interval != "year")
+                return null;
+
+            using var connection = new NpgsqlConnection(getConnectionString());
+
+            string query =
+                @$"
+                SELECT 	state, 
+                        sum(AgeGroup17_24) AS AgeGroup17_24,
+		                sum(AgeGroup25_29) AS AgeGroup25_29,
+                        sum(AgeGroup30_34) AS AgeGroup30_34,
+                        sum(AgeGroup35_39) AS AgeGroup35_39,
+                        sum(AgeGroup40_44) AS AgeGroup40_44,
+                        sum(AgeGroup45_49) AS AgeGroup45_49,
+                        sum(AgeGroup50_54) AS AgeGroup50_54,
+                        sum(AgeGroup55_59) AS AgeGroup55_59
+                FROM newdonorrecord
+                WHERE date >= (CURRENT_DATE - INTERVAL '1 {interval}') AND state = 'Malaysia'
+                GROUP BY state";
+
+            RecentNewDonor data = (
+                await connection.QueryAsync<RecentNewDonor>(query)
+            ).FirstOrDefault();
 
             return data;
         }

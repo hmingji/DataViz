@@ -6,11 +6,23 @@ import {
 } from '../../../hooks/useRecentRatio';
 import DoughnutChart from '../../common/DoughnutChart';
 import { useState } from 'react';
-import Button from '../../common/Button';
+import SelectionGroup from '../../common/SelectionGroup';
+
+const intervalMap: Record<number, RecentQueryInterval> = {
+  1: 'month',
+  2: 'year',
+};
 
 export default function RecentRatioSection() {
-  const [interval, setInterval] = useState<RecentQueryInterval>('month');
-  const { data, isFetched } = useRecentRatio('Record/donation/ratio', interval);
+  const [interval, setInterval] = useState<number>(1);
+  const { data, isFetched } = useRecentRatio(
+    'Record/donation/ratio',
+    intervalMap[interval]
+  );
+
+  function toggleInterval(value: number) {
+    setInterval(value);
+  }
 
   if (isFetched && data) {
     return (
@@ -19,13 +31,13 @@ export default function RecentRatioSection() {
           <h1 className="text-2xl font-bold font-secondary mr-auto">
             A breakdown of donations by key variables
           </h1>
-          <Button
-            label="Past 1 month"
-            handleOnClick={() => setInterval('month')}
-          />
-          <Button
-            label="Past 1 year"
-            handleOnClick={() => setInterval('year')}
+          <SelectionGroup
+            options={[
+              { id: 1, label: 'Past 1 month' },
+              { id: 2, label: 'Past 1 year' },
+            ]}
+            value={interval}
+            handleOnChange={toggleInterval}
           />
         </div>
         <div className="flex gap-2 flex-wrap">

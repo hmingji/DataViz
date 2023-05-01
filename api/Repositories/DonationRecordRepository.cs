@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Entities;
 using api.Repositories.Interfaces;
+using api.Repositories.ValueObjects;
 using api.RequestHelpers;
 using Dapper;
 using Npgsql;
@@ -118,16 +119,12 @@ namespace api.Repositories
             return data;
         }
 
-        public async Task<RecentRatioData> GetRecentRatio(string interval)
+        public async Task<RecentRatioData> GetRecentRatio(string interval = "month")
         {
-            using var connection = new NpgsqlConnection(getConnectionString());
+            if (interval != "month" && interval != "year")
+                return null;
 
-            var dbParam = new DbString()
-            {
-                Value = "month",
-                IsAnsi = true,
-                IsFixedLength = false
-            };
+            using var connection = new NpgsqlConnection(getConnectionString());
 
             string query =
                 @$"

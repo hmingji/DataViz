@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.RequestHelpers;
 
-namespace api.RequestHelpers
+namespace api.Repositories.ValueObjects
 {
     public class RecentRatioData
     {

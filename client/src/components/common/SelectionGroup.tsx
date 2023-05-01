@@ -3,12 +3,12 @@ import { ReactNode } from 'react';
 
 interface Props {
   options: option[];
-  value: number | undefined;
+  value: number;
   handleOnChange: (item: number) => void;
 }
 
 export type option = {
-  id: number;
+  id: number | string;
   label: string;
   icon?: ReactNode;
 };

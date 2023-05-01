@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Entities;
+using api.Repositories.ValueObjects;
 using api.RequestHelpers;
 
 namespace api.Repositories.Interfaces

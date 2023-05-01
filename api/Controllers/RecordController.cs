@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Entities;
 using api.Repositories.Interfaces;
+using api.Repositories.ValueObjects;
 using api.RequestHelpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,7 +53,7 @@ namespace api.Controllers
         )
         {
             RecentRatioData data = await _donationRecordRepository.GetRecentRatio(
-                recordParams.interval
+                recordParams.interval ?? "month"
             );
             if (data == null)
                 return NotFound();
@@ -152,6 +153,19 @@ namespace api.Controllers
                 return NotFound();
 
             return records;
+        }
+
+        [HttpGet("newdonor/recent", Name = "GetRecentNewDonorOverview")]
+        public async Task<ActionResult<List<ItemValue>>> GetRecentNewDonorOverview(
+            [FromQuery] RecordParams recordParams
+        )
+        {
+            var data = await _newDonorRecordRepository.getRecentOverview(
+                recordParams.interval ?? "month"
+            );
+            if (data == null)
+                return NotFound();
+            return data.mapIntoResponse();
         }
 
         [HttpGet("newdonor/daily/{attribute}", Name = "GetDailyNewDonorData")]
