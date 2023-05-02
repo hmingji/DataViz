@@ -13,7 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Ref } from 'react';
-import { ChartJSOrUndefined } from '../../../node_modules/react-chartjs-2/dist/types';
+import { ChartJSOrUndefined } from '../../../../node_modules/react-chartjs-2/dist/types';
 
 ChartJS.register(
   zoomPlugin,

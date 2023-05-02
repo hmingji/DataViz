@@ -9,6 +9,6 @@
 //   ageGroup55_59: number;
 // };
 
-import { ItemValue } from './RecentRatioResponse';
+import { ItemValue } from './RatioResponse';
 
 export type AgeGroupResponse = ItemValue[];

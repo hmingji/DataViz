@@ -31,7 +31,11 @@ namespace api.Repositories
 
             List<DonationRecord> records = (
                 await connection.QueryAsync<DonationRecord>(
-                    "SELECT * FROM DonationRecord WHERE State = @state AND Date BETWEEN @startDate AND @endDate",
+                    @"SELECT * 
+                        FROM DonationRecord 
+                        WHERE State = @state 
+                        AND Date BETWEEN @startDate 
+                        AND @endDate",
                     new
                     {
                         state = state,
@@ -49,7 +53,18 @@ namespace api.Repositories
             using var connection = new NpgsqlConnection(getConnectionString());
 
             var affected = await connection.ExecuteAsync(
-                "INSERT INTO DonationRecord (Date, State, Daily, Blood_A, Blood_B, Blood_O, Blood_AB, Location_Centre, Location_Mobile, Type_WholeBlood, Type_ApheresisPlatelet, Type_ApheresisPlasma, Type_Other, Social_Civilian, Social_Student, Social_PoliceArmy, Donor_New, Donor_Regular, Donor_Irregular) VALUES (@date, @state, @daily, @blood_A, @blood_B, @blood_O, @blood_AB, @location_Centre, @location_Mobile, @type_WholeBlood, @type_ApheresisPlatelet, @type_ApheresisPlasma, @type_Other, @social_Civilian, @social_Student, @social_PoliceArmy, @donor_New, @donor_Regular, @donor_Irregular)",
+                @"INSERT INTO DonationRecord 
+                    (Date, State, Daily, Blood_A, Blood_B, Blood_O, 
+                    Blood_AB, Location_Centre, Location_Mobile, Type_WholeBlood, 
+                    Type_ApheresisPlatelet, Type_ApheresisPlasma, Type_Other, 
+                    Social_Civilian, Social_Student, Social_PoliceArmy, Donor_New, 
+                    Donor_Regular, Donor_Irregular) 
+                    
+                    VALUES (@date, @state, @daily, @blood_A, @blood_B, @blood_O, 
+                    @blood_AB, @location_Centre, @location_Mobile, @type_WholeBlood, 
+                    @type_ApheresisPlatelet, @type_ApheresisPlasma, @type_Other, 
+                    @social_Civilian, @social_Student, @social_PoliceArmy, @donor_New, 
+                    @donor_Regular, @donor_Irregular)",
                 new
                 {
                     date = record.Date,
@@ -148,6 +163,37 @@ namespace api.Repositories
                 GROUP BY state";
 
             var data = (await connection.QueryAsync<RecentRatioData>(query)).FirstOrDefault();
+
+            return data;
+        }
+
+        public async Task<List<YearlyRatioData>> GetYearlyRatio()
+        {
+            using var connection = new NpgsqlConnection(getConnectionString());
+
+            string query =
+                @$"
+                SELECT 	CAST(DATE_PART('year', date) AS INTEGER) AS year, 
+                        ROUND(100.0 * sum(blood_a)/sum(daily), 1) AS blood_a,
+		                ROUND(100.0 * sum(blood_b)/sum(daily), 1) AS blood_b,
+                        ROUND(100.0 * sum(blood_o)/sum(daily), 1) AS blood_o,
+                        ROUND(100.0 * sum(blood_ab)/sum(daily), 1) AS blood_ab,
+                        ROUND(100.0 * sum(location_centre)/sum(daily), 1) AS location_centre,
+                        ROUND(100.0 * sum(location_mobile)/sum(daily), 1) AS location_mobile,
+                        ROUND(100.0 * sum(type_wholeblood)/sum(daily), 1) AS type_wholeblood,
+                        ROUND(100.0 * (sum(type_apheresisplatelet) + sum(type_apheresisplasma))/sum(daily), 1) AS type_apheresis,
+                        ROUND(100.0 * sum(social_civilian)/sum(daily), 1) AS social_civilian,
+                        ROUND(100.0 * sum(social_student)/sum(daily), 1) AS social_student,
+                        ROUND(100.0 * sum(social_policearmy)/sum(daily), 1) AS social_uniformedBodies,
+                        ROUND(100.0 * sum(donor_new)/sum(daily), 1) AS donor_new,
+                        ROUND(100.0 * sum(donor_regular)/sum(daily), 1) AS donor_regular,
+                        ROUND(100.0 * sum(donor_irregular)/sum(daily), 1) AS donor_lapsed
+                FROM donationrecord
+                WHERE state = 'Malaysia'
+                GROUP BY DATE_PART('year', date)
+                ORDER BY DATE_PART('year', date)";
+
+            var data = (await connection.QueryAsync<YearlyRatioData>(query)).ToList();
 
             return data;
         }

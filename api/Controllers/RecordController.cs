@@ -61,6 +61,16 @@ namespace api.Controllers
             return data.mapIntoVariables();
         }
 
+        [HttpGet("donation/yearly/ratio", Name = "GetYearlyRatio")]
+        public async Task<ActionResult<List<YearlyDonationVariable>>> GetYearlyRatio()
+        {
+            List<YearlyRatioData> data = await _donationRecordRepository.GetYearlyRatio();
+            if (data == null)
+                return NotFound();
+
+            return data.Select((p) => p.mapIntoYearlyVariables()).ToList();
+        }
+
         [HttpGet("donation/daily/{attribute}", Name = "GetDailyDonationData")]
         public async Task<ActionResult<DataResponse<TimeSeriesData>>> GetDailyDonationData(
             string attribute,

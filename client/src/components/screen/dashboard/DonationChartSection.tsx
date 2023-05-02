@@ -14,7 +14,7 @@ import getChartMinDate from '../../../utils/getChartMinDate';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { useRef } from 'react';
 import { ChartJSOrUndefined } from '../../../../node_modules/react-chartjs-2/dist/types';
-import LineChart from '../../common/LineChart';
+import LineChart from '../../common/Charts/LineChart';
 
 export default function DonationChartSection() {
   const {

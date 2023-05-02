@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAgeGroup } from '../../../hooks/useAgeGroup';
 import { RecentQueryInterval } from '../../../hooks/useRecentRatio';
 import SelectionGroup from '../../common/SelectionGroup';
-import BarChart from '../../common/BarChart';
+import BarChart from '../../common/Charts/BarChart';
 import { AgeGroupResponse } from '../../../models/AgeGroupResponse';
 import { ChartData } from 'chart.js';
 

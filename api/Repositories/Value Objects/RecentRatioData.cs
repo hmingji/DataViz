@@ -8,7 +8,7 @@ namespace api.Repositories.ValueObjects
 {
     public class RecentRatioData
     {
-        public string state { get; set; }
+        //public string state { get; set; }
         public float blood_a { get; set; }
         public float blood_b { get; set; }
         public float blood_o { get; set; }

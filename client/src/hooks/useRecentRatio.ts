@@ -1,5 +1,5 @@
 import { requests } from '../api/agent';
-import { Variable } from '../models/RecentRatioResponse';
+import { Variable } from '../models/RatioResponse';
 import { useQuery } from 'react-query';
 
 const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
