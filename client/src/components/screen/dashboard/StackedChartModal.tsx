@@ -25,7 +25,12 @@ export default function StackedChartModal({ variable }: Props) {
 }
 
 function getBackgroundColors(index: number) {
-  const colorSet = ['#4338ca', '#0369a1', '#0f766e', '#6ee7b7'];
+  const colorSet = [
+    'rgba(43,11,63,0.8)',
+    'rgba(155,49,146,0.8)',
+    'rgba(234,95,137, 0.8)',
+    'rgba(247,183,163, 0.8)',
+  ];
   return colorSet[index];
 }
 

@@ -95,6 +95,27 @@ namespace api.Repositories
             return true;
         }
 
+        public async Task<LatestStatistics> GetLatestStatistics()
+        {
+            using var connection = new NpgsqlConnection(getConnectionString());
+
+            string query =
+                @"SELECT CAST(DATE_PART('year', date) AS INTEGER) AS Year,
+                                    SUM(daily) AS TotalDonation,
+                                    SUM(donor_new) AS NewDonor,
+                                    SUM(donor_regular) AS RegularDonor
+                            FROM donationrecord
+                            WHERE DATE_PART('year', date) = DATE_PART('year', CURRENT_DATE) - 1
+                            AND state = 'Malaysia'
+                            GROUP BY DATE_PART('year', date)";
+
+            LatestStatistics data = (
+                await connection.QueryAsync<LatestStatistics>(query)
+            ).FirstOrDefault();
+
+            return data;
+        }
+
         public async Task<List<TimeSeriesData>> GetDailyRecords(string state, string attribute)
         {
             using var connection = new NpgsqlConnection(getConnectionString());

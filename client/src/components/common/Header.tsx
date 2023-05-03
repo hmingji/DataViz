@@ -18,7 +18,7 @@ export default function Header() {
           </h1>
           <p className="lg:text-lg text-base text-black py-4 font-secondary font-normal tracking-widest">
             Visualize variety of statistics related to blood donation starting
-            from year 2006. These charts support zoom and pan feature: use
+            from year 2006. The line charts support zoom and pan feature: use
             scroll or drag to zoom and use &apos;ctrl&apos; + drag to pan.
             Inspired by{' '}
             <a

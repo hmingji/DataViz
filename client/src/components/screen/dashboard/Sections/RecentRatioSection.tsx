@@ -1,15 +1,16 @@
 import { ChartData } from 'chart.js';
-import { Variable } from '../../../models/RatioResponse';
+import { Variable } from '../../../../models/RatioResponse';
 import {
   RecentQueryInterval,
   useRecentRatio,
-} from '../../../hooks/useRecentRatio';
-import DoughnutChart from '../../common/Charts/DoughnutChart';
+} from '../../../../hooks/useRecentRatio';
+import DoughnutChart from '../../../common/Charts/DoughnutChart';
 import { Fragment, useState } from 'react';
-import SelectionGroup from '../../common/SelectionGroup';
-import { ChartIcon } from '../../common/Icons/ChartIcon';
+import SelectionGroup from '../../../common/SelectionGroup';
+import { ChartIcon } from '../../../common/Icons/ChartIcon';
 import { Dialog, Transition } from '@headlessui/react';
-import StackedChartModal from './StackedChartModal';
+import StackedChartModal from '../StackedChartModal';
+import { Tooltip } from 'react-tooltip';
 
 const intervalMap: Record<number, RecentQueryInterval> = {
   1: 'month',
@@ -17,7 +18,7 @@ const intervalMap: Record<number, RecentQueryInterval> = {
 };
 
 export default function RecentRatioSection() {
-  const [interval, setInterval] = useState<number>(1);
+  const [interval, setInterval] = useState<number>(2);
   const [isOpen, setIsOpen] = useState(false);
   const [variable, setVariable] = useState('Blood Group');
   const { data, isFetched } = useRecentRatio(
@@ -41,40 +42,76 @@ export default function RecentRatioSection() {
   if (isFetched && data) {
     return (
       <>
-        <div className="max-w-[90vw] xl:max-w-5xl flex flex-col gap-4">
-          <div className="flex gap-2">
-            <h1 className="text-2xl font-bold font-secondary mr-auto">
-              A breakdown of donations by key variables
+        <section className="w-full max-w-[90vw] xl:max-w-5xl border border-gray-500 rounded-lg p-4">
+          <div className="flex items-center pb-2">
+            <h1 className="text-base font-bold font-secondary mr-auto">
+              Key Variables
             </h1>
-            <SelectionGroup
-              options={[
-                { id: 1, label: 'Past 1 month' },
-                { id: 2, label: 'Past 1 year' },
-              ]}
-              value={interval}
-              handleOnChange={toggleInterval}
-            />
+            <div className="max-w-[200px]">
+              <SelectionGroup
+                options={[
+                  { id: 1, label: 'Past 1 mth' },
+                  { id: 2, label: 'Past 1 yr' },
+                ]}
+                value={interval}
+                handleOnChange={toggleInterval}
+                textSize="text-xs"
+              />
+            </div>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="">
             {data.map((p) => {
               const chartData = generateChartDataset(p);
               return (
                 <div
                   key={p.name}
-                  className="border border-gray-500 p-4 rounded-md"
+                  className="py-1 w-full"
                 >
-                  <header className="flex mb-4 items-center">
+                  <header className="flex mb-4 items-center gap-3">
                     <h3 className="font-secondary mr-auto">{p.name}</h3>
-                    <div onClick={() => openModal(p.name)}>
-                      <ChartIcon size="md" />
-                    </div>
+                    <div className="flex-grow border-t border-[rgba(155,49,146,0.8)] border-[1px]"></div>
                   </header>
-                  <DoughnutChart chartData={chartData} />
+
+                  <div className="w-full aspect-[2] mx-auto flex justify-center relative">
+                    <DoughnutChart
+                      chartData={chartData}
+                      options={{
+                        // aspectRatio: 1,
+                        radius: '80%',
+                        cutout: '55%',
+                        plugins: {
+                          legend: {
+                            position: 'right',
+                            align: 'center',
+                            maxWidth: 100,
+                            labels: { usePointStyle: true },
+                          },
+                        },
+                      }}
+                    />
+
+                    <button
+                      className="w-fit border border-gray-500 rounded-md p-2 absolute top-0 right-0"
+                      onClick={() => openModal(p.name)}
+                    >
+                      <a
+                        data-tooltip-id="my-tooltip"
+                        data-tooltip-content="Yearly Breakdown"
+                        data-tooltip-offset={20}
+                      >
+                        <ChartIcon size="sm" />
+                      </a>
+                    </button>
+                    <Tooltip
+                      id="my-tooltip"
+                      place="left"
+                    />
+                  </div>
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
         <Transition
           appear
           show={isOpen}
@@ -122,7 +159,7 @@ export default function RecentRatioSection() {
                     <div className="mt-4">
                       <button
                         type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                         onClick={closeModal}
                       >
                         Close
@@ -142,7 +179,7 @@ export default function RecentRatioSection() {
 
 function generateChartDataset(variable: Variable): ChartData<'doughnut'> {
   return {
-    labels: [...variable.items.map((p) => p.name)],
+    labels: [...variable.items.map((p) => p.name.split(' '))],
     datasets: [
       {
         label: 'percentage',
@@ -156,6 +193,15 @@ function generateChartDataset(variable: Variable): ChartData<'doughnut'> {
 
 function getBackgroundColors(quantity: number) {
   //todo generate color set based on quantity
-  const colorSet = ['#4338ca', '#0369a1', '#0f766e', '#6ee7b7'];
+  const colorSet = [
+    // 'rgba(67,56,202, 0.75)',
+    // 'rgba(3,105,161, 0.75)',
+    // 'rgba(15,118,110,0.75)',
+    // 'rgba(110,231,183,0.75)',
+    'rgba(43,11,63,0.8)',
+    'rgba(155,49,146,0.8)',
+    'rgba(234,95,137, 0.8)',
+    'rgba(247,183,163, 0.8)',
+  ];
   return colorSet.slice(0, quantity);
 }

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import './index.css';
+import 'react-tooltip/dist/react-tooltip.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();

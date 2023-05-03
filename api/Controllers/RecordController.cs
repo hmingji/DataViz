@@ -47,6 +47,15 @@ namespace api.Controllers
             return records;
         }
 
+        [HttpGet("donation/lateststats", Name = "GetLatestStatistics")]
+        public async Task<ActionResult<LatestStatisticsResponse>> GetLastestStatistics()
+        {
+            LatestStatistics data = await _donationRecordRepository.GetLatestStatistics();
+            if (data == null)
+                return NotFound();
+            return data.mapIntoResponse();
+        }
+
         [HttpGet("donation/ratio", Name = "GetRecentRatio")]
         public async Task<ActionResult<List<DonationVariable>>> GetRecentRatio(
             [FromQuery] RecordParams recordParams

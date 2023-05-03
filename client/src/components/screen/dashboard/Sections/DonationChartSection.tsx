@@ -1,22 +1,22 @@
-import Button from '../../../components/common/Button';
-import DropdownMenu from '../../../components/common/DropdownMenu';
-import { ArrowPathSpin } from '../../../components/common/Icons/ArrowPathSpin';
-import { ChevronDown } from '../../../components/common/Icons/ChevronDown';
-import MagnifyingGlass from '../../../components/common/Icons/MagnifyingGlass';
-import MultiSelectListBox from '../../../components/common/MultiSelectListBox';
-import SelectionGroup from '../../../components/common/SelectionGroup';
-import { attributes } from '../../../constants/attributes';
-import { intervals } from '../../../constants/intervals';
-import { states } from '../../../constants/states';
-import { useChart } from '../../../hooks/useChart';
-import { generateChartDataset } from '../../../utils/generateChartDataset';
-import getChartMinDate from '../../../utils/getChartMinDate';
+import Button from '../../../common/Button';
+import DropdownMenu from '../../../common/DropdownMenu';
+import { ArrowPathSpin } from '../../../common/Icons/ArrowPathSpin';
+import { ChevronDown } from '../../../common/Icons/ChevronDown';
+import MagnifyingGlass from '../../../common/Icons/MagnifyingGlass';
+import MultiSelectListBox from '../../../common/MultiSelectListBox';
+import SelectionGroup from '../../../common/SelectionGroup';
+import { attributes } from '../../../../constants/attributes';
+import { intervals } from '../../../../constants/intervals';
+import { states } from '../../../../constants/states';
+import { useChart } from '../../../../hooks/useChart';
+import { generateChartDataset } from '../../../../utils/generateChartDataset';
+import getChartMinDate from '../../../../utils/getChartMinDate';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import { useRef } from 'react';
-import { ChartJSOrUndefined } from '../../../../node_modules/react-chartjs-2/dist/types';
-import LineChart from '../../common/Charts/LineChart';
+import { ChartJSOrUndefined } from '../../../../../node_modules/react-chartjs-2/dist/types';
+import LineChart from '../../../common/Charts/LineChart';
 
-export default function NewDonorChartSection() {
+export default function DonationChartSection() {
   const {
     attribute,
     setAttribute,
@@ -25,7 +25,7 @@ export default function NewDonorChartSection() {
     state,
     setState,
     results,
-  } = useChart('newdonor');
+  } = useChart('donation');
   const datasets = useRef<ChartDataset<'line'>[]>([{ label: '', data: [] }]);
   const chartRef = useRef<ChartJSOrUndefined<'line'>>(null);
 
@@ -96,20 +96,24 @@ export default function NewDonorChartSection() {
 
   return (
     <section
-      className="container justify-center flex z-20"
-      id="newdonor-chart"
+      className="w-full max-w-[90vw] xl:max-w-5xl justify-center flex border border-gray-600 rounded-xl p-4"
+      id="donation-chart"
     >
-      <div className="w-full max-w-[90vw] xl:max-w-5xl relative">
+      <div className="w-full relative">
         <header className="pb-4">
-          <h1 className="text-2xl font-bold font-secondary">
-            New donor trend by age group
+          <h1 className="text-base font-bold font-secondary">
+            Donation Records
           </h1>
+          {/* <h1 className="text-xl font-normal font-secondary">
+            Blood Group, Donation Location, Donation Type, Social Group, Donor
+            Regularrity
+          </h1> */}
         </header>
-        <div className="inline-flex w-full flex-wrap justify-between items-center gap-2">
+        <div className="inline-flex w-full flex-wrap justify-between items-center gap-2 pb-2">
           <DropdownMenu
             buttonLabel="Attribute"
             menuItems={attributes
-              .filter((attribute) => attribute.category == 'newdonor')
+              .filter((attribute) => attribute.category == 'donation')
               .map((attribute) => attribute.displayName)}
             handleOnClick={handleDropdownOnClick}
             buttonIcon={<ChevronDown size="sm" />}
@@ -140,7 +144,7 @@ export default function NewDonorChartSection() {
             optionWithIcon={false}
           />
         </div>
-        <div className="w-full h-full relative aspect-[2] py-5 flex flex-col">
+        <div className="w-full aspect-[2]">
           <LineChart
             forwardRef={chartRef}
             options={options}
@@ -148,14 +152,12 @@ export default function NewDonorChartSection() {
               datasets: datasets.current,
             }}
           />
-          <div>
-            <Button
-              label="Reset"
-              icon={<MagnifyingGlass size="sm" />}
-              handleOnClick={resetChartZoomState}
-            />
-          </div>
         </div>
+        <Button
+          label="Reset"
+          icon={<MagnifyingGlass size="sm" />}
+          handleOnClick={resetChartZoomState}
+        />
         {!results.every((result) => result.isSuccess) && (
           <div className="absolute top-1/2 left-1/2">
             <ArrowPathSpin size="lg" />

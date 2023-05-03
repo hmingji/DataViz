@@ -17,5 +17,6 @@ namespace api.Repositories.Interfaces
         Task<List<TimeSeriesData>> GetYearlyRecords(string state, string attribute);
         Task<RecentRatioData> GetRecentRatio(string interval);
         Task<List<YearlyRatioData>> GetYearlyRatio();
+        Task<LatestStatistics> GetLatestStatistics();
     }
 }

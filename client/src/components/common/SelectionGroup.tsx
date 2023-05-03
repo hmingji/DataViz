@@ -5,6 +5,7 @@ interface Props {
   options: option[];
   value: number;
   handleOnChange: (item: number) => void;
+  textSize?: 'text-base' | 'text-xs';
 }
 
 export type option = {
@@ -21,6 +22,7 @@ export default function SelectionGroup({
   options,
   value,
   handleOnChange,
+  textSize = 'text-base',
 }: Props) {
   return (
     <RadioGroup
@@ -41,7 +43,7 @@ export default function SelectionGroup({
                 checked
                   ? 'bg-black text-white cursor-default font-semibold border-black border'
                   : 'text-gray-700 cursor-pointer',
-                'text-base align-middle w-full h-full px-2'
+                `${textSize} align-middle w-full h-full px-2`
               )}
             >
               {option.label}

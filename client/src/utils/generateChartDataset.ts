@@ -23,5 +23,6 @@ export const generateChartDataset = (apiResponse: RecordResponse) => {
       states.find((state) => state.paramValue === apiResponse.metaData.state)
         ?.chartBorderColor || 'rgb(0,0,0)',
     borderWidth: 1,
+    tension: 0.2,
   };
 };
