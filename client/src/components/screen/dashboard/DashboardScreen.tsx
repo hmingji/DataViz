@@ -1,4 +1,3 @@
-import StatCard from '../../common/StatsCard';
 import CurrentStatsSection from './Sections/CurrentStatsSection';
 import DonationChartSection from './Sections/DonationChartSection';
 import NewDonorAgeGroupSection from './Sections/NewDonorAgeGroupSection';

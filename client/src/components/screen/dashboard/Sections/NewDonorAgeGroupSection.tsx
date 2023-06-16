@@ -13,10 +13,7 @@ const intervalMap: Record<number, RecentQueryInterval> = {
 
 export default function NewDonorAgeGroupSection() {
   const [interval, setInterval] = useState<number>(2);
-  const { data, isFetched } = useAgeGroup(
-    'Record/newdonor/recent',
-    intervalMap[interval]
-  );
+  const { data } = useAgeGroup('Record/newdonor/recent', intervalMap[interval]);
 
   function toggleInterval(value: number) {
     setInterval(value);
