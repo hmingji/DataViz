@@ -1,6 +1,6 @@
 # Blood Donation Trend
 
-Built with nextjs(frontend) and aspnet (api), an interactive visualization of blood donation trend in Malaysia. Data source: [MoH Public Data Repo](https://github.com/MoH-Malaysia/data-darah-public)
+Built with reactjs(frontend, 'react' branch) and aspnet (api), an interactive visualization of blood donation trend in Malaysia. Data source: [MoH Public Data Repo](https://github.com/MoH-Malaysia/data-darah-public)
 
 ## Getting Started (development)
 
@@ -14,3 +14,7 @@ Built with nextjs(frontend) and aspnet (api), an interactive visualization of bl
 You should be good to go now! Open localhost:3000 in browser.
 
 (Note: One of the packages used in api, e.g. z.dapper.plus is not free and thus you may need to update the package version to renew the trial.)
+
+## Architecture
+
+![diagram](blood-donation-trend-architecture.drawio.png)
