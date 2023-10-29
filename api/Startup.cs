@@ -95,8 +95,7 @@ namespace api
             var provider = app.ApplicationServices;
             provider.UseScheduler(schedular =>
             {
-                schedular.Schedule<RetrieveDataFromGithub>().DailyAt(8 + 8, 0);
-                //.RunOnceAtStart(); //for development purpose
+                schedular.Schedule<RetrieveDataFromGithub>().DailyAt(8 + 8, 0).RunOnceAtStart(); //for development purpose
             });
         }
     }
